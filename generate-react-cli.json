@@ -1,16 +1,16 @@
 {
-  "usesTypeScript": true,
-  "usesStyledComponents": false,
-  "testLibrary": "Testing Library",
-  "component": {
-    "default": {
-      "path": "resources/js/Components",
-      "withStyle": false,
-      "withTest": false,
-      "withStory": false,
-      "withLazy": false
-    }
-  },
-  "usesCssModule": true,
-  "cssPreprocessor": "css"
+    "usesTypeScript": true,
+    "usesStyledComponents": false,
+    "testLibrary": "Testing Library",
+    "component": {
+        "default": {
+            "path": "resources/js/Components",
+            "withStyle": false,
+            "withTest": false,
+            "withStory": false,
+            "withLazy": false
+        }
+    },
+    "usesCssModule": true,
+    "cssPreprocessor": "css"
 }
