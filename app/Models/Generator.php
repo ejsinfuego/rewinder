@@ -10,13 +10,19 @@ class Generator extends Model
 {
     use HasFactory;
 
+    // protected $fillable = [
+    //     'diagnosis_id',
+    //     'serial_number',
+    //     'user_id',
+    // ];
+
     public function user(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
-    public function rewinder(): BelongsToMany
+    public function rewindingProcedure(): BelongsToMany
     {
-        return $this->belongsToMany(Rewinder::class);
+        return $this->belongsToMany(RewindingProcedure::class);
     }
 }
