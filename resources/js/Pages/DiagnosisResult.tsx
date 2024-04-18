@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import GenerateForm from "@/Components/GenerateForm/GenerateForm";
+import DiagnosisResult from "@/Components/DiagnosisResult/DiagnosisResult";
 export default function Dashboard({ auth }: PageProps) {
     return (
         <AuthenticatedLayout
@@ -15,8 +15,7 @@ export default function Dashboard({ auth }: PageProps) {
         >
             <Head title="Dashboard" />
             <div className="flex justify-center mt-6 max-w-full border border-2">
-                <GenerateForm />
-
+                <DiagnosisResult />
             </div>
         </AuthenticatedLayout>
     );

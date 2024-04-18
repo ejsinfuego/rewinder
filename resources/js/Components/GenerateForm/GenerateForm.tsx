@@ -1,128 +1,522 @@
-import React, { FC } from "react";
-import { Button, Radio, Form, Input, Tooltip } from "antd";
-import { InfoCircleOutlined, UserOutlined } from "@ant-design/icons";
+import React, { FC, useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { set, useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "../ui/button"
+import { Loader2 } from 'lucide-react';
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "../ui/form"
+import { Spinner } from "@/Components/Spinner"
+import TextInput from "../TextInput"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
+import { ArrowLeftIcon } from "lucide-react";
+import { useForm as submitForm } from '@inertiajs/react';
+import { isForRewind, mainFormula, jobOrderGenerator, damage } from "@/lib/utils";
+import DiagnosisResult from "../DiagnosisResult/DiagnosisResult";
+
+
 
 interface GenerateFormProps {}
 
-const formItemLayout = {
-    labelCol: {
-        xs: { span: 24 },
-        sm: { span: 12 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 20 },
-    },
-};
 
 const GenerateForm: FC<GenerateFormProps> = () => {
+    const [hide, setHide] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [rewind, setRewind] = useState(false)
+    const [diagnosis, setDiagnosis] = useState(null)
+    const [results, setResults] = useState(null)
+    const [diagnosisLoad, setDiagnosisLoad] = useState(false)
+
+    const { post, setData } = submitForm({
+        serialNumber: "",
+        kVa: 0,
+        step1: "",
+        step2: "",
+        step3: "",
+        step4: "",
+        rotor: "",
+        stator: "",
+        exciter: "",
+        manpower: 0,
+        materials: "",
+        prediction: "",
+    })
+    const formSchema = z.object({
+        serial_number: z.string().nonempty({ message: 'Serial Number is required'}),
+        kVa: z.number(),
+        step1: z.string().nonempty({ message: 'Step 1 is required, Please choose an option'}),
+        step2: z.string().nonempty({ message: 'Step 2 is required, Please choose an option'}),
+        step3: z.string().nonempty({ message: 'Step 3 is required, Please choose an option'}),
+        step4: z.string().nonempty({ message: 'Step 4 is required, Please choose an option'}),
+        prediction: z.number(),
+        jobOrder: z.string(),
+        result: z.string(),
+        rotor: z.string(),
+        stator: z.string(),
+        exciter: z.string(),
+        manpower: z.number(),
+        materials: z.string(),
+
+    })
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+        serial_number: "",
+            kVa: 0,
+            step1: "",
+            step2: "",
+            step3: "",
+            step4: "",
+            rotor: "",
+            stator: "",
+            exciter: "",
+            manpower: 0,
+            materials: "",
+            prediction: 0,
+            jobOrder: "",
+        },
+    })
+
+    const fourthSteps = document.getElementById("fourthSteps")
+    const damages = document.getElementById("damages")
+
+    useEffect(() => {
+
+
+    if(hide){
+        fourthSteps?.setAttribute("hidden", "true")
+        damages?.removeAttribute("hidden")
+    }else{
+        damages?.setAttribute("hidden", "true")
+        fourthSteps?.removeAttribute("hidden")
+    }
+    }, [hide])
+    const convertToNumber = (value: string) => {
+        return parseInt(value, 10)
+    }
+
+    const forRewind = () => {
+        const result = isForRewind({ step_1: form.getValues("step1"), step_2: form.getValues("step2"), step_3: form.getValues("step3"), step_4: form.getValues("step4") })
+       form.setValue("result", result)
+       return result
+    }
+
+    const getPrediction = () => {
+        const damagedParts = damage({ damage: form.getValues()})
+        const rating = parseInt(form.getValues('kVa').toString().charAt(0), 10)
+        const jobOrder = jobOrderGenerator()
+        const materials = form.getValues('materials') === "true" ? 1 : 0
+        const mainFormulaValue = mainFormula(damagedParts, rating, materials, form.getValues('manpower'))
+        form.setValue("jobOrder", jobOrder)
+        form.setValue("prediction", mainFormulaValue)
+    }
+
+    function onSubmit(values: z.infer<typeof formSchema>) {
+
+
+        console.log(values)
+    }
+
+    const handleSubmit = () => {
+        getPrediction()
+        const values = form.getValues()
+        const res = values
+        //convert the object into flat array
+        const result = res ? Object.entries(res).map(([key, value]) => ({ step: key, description: value })) : []
+        setResults(result)
+        handleDiagnosisLoad(true)
+    }
+
+    const handleReconOrRewindChange = () => {
+        (forRewind() === 'rewind') ? setRewind(true) : setRewind(false)
+        setDiagnosis(forRewind())
+    }
+
+    const handleLoad = () => {
+        setLoading(true)
+        setDiagnosis(null)
+        setTimeout(() => {
+            setLoading(false)
+            handleReconOrRewindChange()
+        }, 1000)
+    }
+
+    const handleDiagnosisLoad = () => {
+        setDiagnosisLoad(true)
+        setTimeout(() => {
+            setDiagnosisLoad(false)
+        }, 1000)
+    }
+
+
     return (
-        <div className="rounded-lg border border-4">
-            <div className="flex flex-col w-full py-2">
-                <div>
-                    <h1 className="text-center py-6">Generator Form</h1>
-                </div>
-                <Form
-                    style={{ maxWidth: "600px", padding: "50px" }}
-                    {...formItemLayout}
-                    name="basic"
-                    initialValues={{ remember: true }}
-                    onFinish={(values) => {
-                        console.log(values);
-                    }}
-                    onFinishFailed={(errorInfo) => {
-                        console.log("Failed:", errorInfo);
-                    }}
-                >
-                    <Form.Item
-                        label="Employee ID"
-                        name="employeeId"
-                        className=""
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please input your User ID!",
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="Enter your username"
-                            prefix={
-                                <UserOutlined className="site-form-item-icon" />
-                            }
-                            suffix={
-                                <Tooltip title="Extra information">
-                                    <InfoCircleOutlined
-                                        style={{ color: "rgba(0,0,0,.45)" }}
-                                    />
-                                </Tooltip>
-                            }
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Generator Name: "
-                        name="generatorName"
-                        className="flex"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter the Generator Name!",
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="input with clear icon"
-                            allowClear
-                            onChange={() => {
-                                console.log("change");
-                            }}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Stage 1 (Insulation Resistance Test)"
-                        name="stage1"
-                        className=""
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter the Generator Name!",
-                            },
-                        ]}
-                    >
-                        <Radio.Group
-                            onChange={(e) => {
-                                console.log(e.target);
-                            }}
-                            className="flex"
-                        >
-                            <Radio value={true}>Passed</Radio>
-                            <Radio value={false}>Failed</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
-                        label="Stage 2"
-                        name="stage1"
-                        className="flex justify-center"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter the Generator Name!",
-                            },
-                        ]}
-                    >
-                        <Radio.Group
-                            onChange={(e) => {
-                                console.log(e.target);
-                            }}
-                            className="flex"
-                        >
-                            <Radio value={true}>Passed</Radio>
-                            <Radio value={false}>Failed</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                </Form>
-            </div>
+    <>
+    {results ?
+    <>
+    {diagnosisLoad ? <>
+        <div className="items-center">
+            <Loader2 className="mx-auto animate-spin text-primary text-center" size={50} />
+            <p className="text-center py-2 font-light">Loading...</p>
         </div>
+        </> : <>
+        <DiagnosisResult diagnosisResult={results} />
+        </>
+    }
+
+    </>
+    :
+    <>
+        <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pt-5 border border-gray-300 p-10 rounded-xl w-2/4">
+      <h2 className="text-2xl font-semibold font text-center">Generator Form</h2>
+      <div className="flex flex-col justify-center">
+        <div className="flex justify-center mb-5">
+        <FormField
+          control={form.control}
+          name="serial_number"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex flex-col">Serial Number</FormLabel>
+              <FormControl>
+                <TextInput className="p-2 flex min-w-[300px] rounded" placeholder="Serial Number here..." {...field} />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+        </div>
+        <div className="flex justify-center mb-5">
+        <FormField
+          control={form.control}
+          name="kVa"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex flex-col">Rating</FormLabel>
+              <FormDescription className="text-xs">Enter the Rating (200-900 kVA)</FormDescription>
+              <FormControl>
+                <Input required type="number" className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
+                    (e) => {
+                        if(e.target.value === ""){
+                            form.setValue("kVa", "")
+                        }else{
+                            form.setValue("kVa", convertToNumber(e.target.value))
+                        }
+
+                    }
+                } />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        </div>
+        {diagnosis &&
+        <>
+        <div className="flex justify-center mb-5">
+        <h4 className="text-center py-2 font-medium">
+        {diagnosis === 'rewind' ? 'Rewinding' : 'Recondition' }</h4>
+        </div>
+        </>
+        }
+        {loading ? <>
+        <div className="flex flex-col items-center justify-center mb-5">
+            <div className="items-center">
+            <Loader2 className="mx-auto animate-spin text-primary text-center" />
+            <p className="text-center py-2">Loading...</p></div>
+
+        </div>
+        </>
+        :
+        <>
+
+        {
+            !rewind ? <>
+            <div id="fourthSteps">
+                <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="step1"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Step 1 ( Insulation Resistance Test)</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("step1", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Passed</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">Failed</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="step2"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Step 2 (Winding Resistance Test)</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("step2", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Passed</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">Failed</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="step3"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Step 3 (Phase Voltage Test)</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("step3", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Passed</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">Failed</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="step4"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Step 4 (Surge Test)</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>{
+                            form.setValue("step4", e)
+                            handleLoad()
+                        }
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Passed</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">Failed</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            </div>
+
+            </> :
+            <>
+            <div id="damages">
+            <div className="flex items-center justify-center">
+                <ArrowLeftIcon onClick={()=> {
+                    setRewind(false)
+                }} className="mr-2 cursor-pointer rounded hover:bg-gray-400 hover:text-white" size={15} />
+                <h5 className="text-center py-2">Are the following damaged?</h5>
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="rotor"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Main Rotor</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("rotor", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">No</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="exciter"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Exciter</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("exciter", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">No</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="stator"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Main Stator</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("stator", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">No</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="materials"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Materials Ready?</FormLabel>
+                <FormControl className="p-2 flex min-w-[300px] rounded-sm">
+                <RadioGroup onValueChange={
+                        (e) =>
+                            form.setValue("materials", e)
+                } {...field}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="r1" />
+                        <Label htmlFor="r1">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="r2" />
+                        <Label htmlFor="r2">No</Label>
+                    </div>
+                    </RadioGroup>
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+            <div className="flex justify-center mb-5">
+            <FormField
+            control={form.control}
+            name="manpower"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel className="flex flex-col">Man Power</FormLabel>
+                <FormDescription className="text-xs">(ex. 1 or 2 or 3)</FormDescription>
+                <FormControl>
+                    <Input required type="number" className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
+                        (e) => {
+                            if(e.target.value === ""){
+                                form.setValue("manpower", "")
+                            }else{
+                                form.setValue("manpower", convertToNumber(e.target.value))
+                            }
+
+                        }
+                    } />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            </div>
+
+        </div>
+            </>
+        }
+
+
+        <div className="flex justify-center">
+        <Button className="rounded border border-gray-100" variant="default" onClick={handleSubmit}>Submit</Button>
+        </div>
+        </>
+        }
+
+
+        </div>
+      </form>
+    </Form>
+    </>
+    }
+
+    </>
+
     );
 };
 
