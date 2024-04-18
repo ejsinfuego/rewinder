@@ -18,5 +18,4 @@ rules:
   "react/jsx-filename-extension": "off"
   "react/react-in-jsx-scope": "off"
   "no-unused-vars": "warn"
-  "indent": ["error", 4] # Specifies a 2-space indentation
-  "no-mixed-spaces-and-tabs": "error" # Disallows mixed spaces and tabs for indentation
+  "no-console": "warn"
