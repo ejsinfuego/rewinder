@@ -11,4 +11,12 @@ export type PageProps<
     auth: {
         user: User;
     };
+    generator: GeneratorResultPage;
+    generators: any;
 };
+
+export interface GeneratorResultPage {
+    generator: {
+        name: string;
+    };
+}

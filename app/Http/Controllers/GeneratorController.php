@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
+use App\Models\Diagnosis;
 
 class GeneratorController extends Controller
 {
@@ -15,7 +16,10 @@ class GeneratorController extends Controller
      */
     public function index()
     {
-        //
+        $generators = Generator::with('diagnosis')->get()->where('user_id', auth()->user()->id)->toArray();
+        return Inertia::render('Dashboard', [
+            'generators' => $generators,
+        ]);
     }
 
     /**
@@ -26,15 +30,6 @@ class GeneratorController extends Controller
         //
     }
 
-
-    public function isForRewind($request){
-        if($request->step_1 == 'true' && $request->step_2 == 'true' && $request->step_3 == 'true'){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -43,7 +38,8 @@ class GeneratorController extends Controller
 
         $userid = auth()->user()->id;
         $params = $request->validate([
-            'serial_number' => 'required',
+            'serialNumber' => 'required',
+            'jobOrder' => 'required',
             'step1' => 'required',
             'step2' => 'required',
             'step3' => 'required',
@@ -56,13 +52,12 @@ class GeneratorController extends Controller
         ]);
 
         $genId = Generator::insertGetId([
-            'job_order' => $request['job_order'],
+            'job_order' => $request['jobOrder'],
             'user_id' => $userid,
-            'serial_number' => $params['serial_number'],
+            'serial_number' => $params['serialNumber'],
             'updated_at' => now(),
             'created_at' => now(),
         ]);
-
         //insert genId into request
         $request->merge(['generator_id' => $genId]);
 
@@ -85,9 +80,7 @@ class GeneratorController extends Controller
                 'updated_at' => now(),
              ]);
 
-        return inertia('Dashboard', [
-            'message' => 'Generator has been successfully diagnosed.'
-        ]);
+    return redirect()->route('generator.show', $genId);
     }
 
     /**
@@ -96,6 +89,12 @@ class GeneratorController extends Controller
     public function show(Generator $generator)
     {
         //
+        $gen = Generator::where('id', $generator->id)->first();
+        $diagnosis = DB::select('select * from diagnosis where generator_id = 27');
+        return Inertia::render('GeneratorResultPage', [
+            'generator' => $gen,
+            'diagnosis' => $diagnosis,
+        ]);
     }
 
     /**

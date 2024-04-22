@@ -32,11 +32,11 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     const [hide, setHide] = useState(false)
     const [loading, setLoading] = useState(false)
     const [rewind, setRewind] = useState(false)
-    const [diagnosis, setDiagnosis] = useState(null)
+    const [diagnosis, setDiagnosis] = useState("")
     const [results, setResults] = useState(null)
     const [diagnosisLoad, setDiagnosisLoad] = useState(false)
 
-    const { post, setData } = submitForm({
+    const { post, setData, data } = submitForm({
         serialNumber: "",
         kVa: 0,
         step1: "",
@@ -50,8 +50,10 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         materials: "",
         prediction: "",
     })
+
+
     const formSchema = z.object({
-        serial_number: z.string().nonempty({ message: 'Serial Number is required'}),
+        serialNumber: z.string().nonempty({ message: 'Serial Number is required'}),
         kVa: z.number(),
         step1: z.string().nonempty({ message: 'Step 1 is required, Please choose an option'}),
         step2: z.string().nonempty({ message: 'Step 2 is required, Please choose an option'}),
@@ -71,7 +73,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-        serial_number: "",
+        serialNumber: "",
             kVa: 0,
             step1: "",
             step2: "",
@@ -134,7 +136,8 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         //convert the object into flat array
         const result = res ? Object.entries(res).map(([key, value]) => ({ step: key, description: value })) : []
         setResults(result)
-        handleDiagnosisLoad(true)
+        handleDiagnosisLoad()
+
     }
 
     const handleReconOrRewindChange = () => {
@@ -158,6 +161,23 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         }, 1000)
     }
 
+    const saveData = () => {
+        setData(form.getValues())
+        post(route('testFormula'))
+    }
+
+    const [showSubmit, setShowSubmit] = useState(false)
+
+    useEffect(() => {
+
+        const steps = form.getValues("step1") !== "" && form.getValues("step2") !== "" && form.getValues("step3") !== "" && form.getValues("step4") !== ""
+        if(steps){
+            setShowSubmit(true)
+        }else{
+            setShowSubmit(false)
+        }
+    }, [form.getValues("step1"), form.getValues("step2"), form.getValues("step3"), form.getValues("step4")])
+
 
     return (
     <>
@@ -168,8 +188,16 @@ const GenerateForm: FC<GenerateFormProps> = () => {
             <Loader2 className="mx-auto animate-spin text-primary text-center" size={50} />
             <p className="text-center py-2 font-light">Loading...</p>
         </div>
-        </> : <>
+        </> :
+        <>
+        <div className="flex justify-center">
         <DiagnosisResult diagnosisResult={results} />
+        <Button onClick={saveData} className="rounded">Save</Button>
+        </div>
+
+        <div className="flex justify-center">
+
+        </div>
         </>
     }
 
@@ -183,7 +211,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         <div className="flex justify-center mb-5">
         <FormField
           control={form.control}
-          name="serial_number"
+          name="serialNumber"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex flex-col">Serial Number</FormLabel>
@@ -359,6 +387,10 @@ const GenerateForm: FC<GenerateFormProps> = () => {
             <div id="damages">
             <div className="flex items-center justify-center">
                 <ArrowLeftIcon onClick={()=> {
+                    form.setValue("step1", "")
+                    form.setValue("step2", "")
+                    form.setValue("step3", "")
+                    form.setValue("step4", "")
                     setRewind(false)
                 }} className="mr-2 cursor-pointer rounded hover:bg-gray-400 hover:text-white" size={15} />
                 <h5 className="text-center py-2">Are the following damaged?</h5>
@@ -502,13 +534,11 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         }
 
 
-        <div className="flex justify-center">
+        {showSubmit && <div className="flex justify-center">
         <Button className="rounded border border-gray-100" variant="default" onClick={handleSubmit}>Submit</Button>
-        </div>
+        </div>}
         </>
         }
-
-
         </div>
       </form>
     </Form>

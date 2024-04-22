@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Diagnosis extends Model
 {
     use HasFactory;
-
+    protected $table = 'diagnosis'; // Specify the table name
     public function generator(): BelongsTo
     {
         return $this->belongsTo(Generator::class);

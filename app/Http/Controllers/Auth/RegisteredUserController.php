@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -31,16 +32,23 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'role' => 'required',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+        $name = $request->firstName.' '.$request->lastName;
         $user = User::create([
-            'name' => $request->name,
+            'name' => $name,
+            'first_name' => $request->firstName,
+            'last_name' => $request->lastName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        $request->role === 3 ? $user->assignRole('rewinder') : $user->assignRole('client');
+
 
         event(new Registered($user));
 

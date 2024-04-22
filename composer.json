@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "markrogoyski/math-php": "2.*",
+        "spatie/laravel-permission": "^6.7",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
