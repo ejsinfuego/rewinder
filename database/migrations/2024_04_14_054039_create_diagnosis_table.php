@@ -23,20 +23,10 @@ return new class extends Migration
             $table->boolean("exciter");
             $table->string("result");
             $table->integer("prediction");
+            $table->integer("monpower");
             $table->foreignId("generator_id")->references("id")->on("generators")->nullable(true);
             $table->string("description")->nullable(true);
             $table->integer("kVa")->nullable(true);
-            $table->timestamps();
-        });
-
-        Schema::create('rewinding_procedure', function (Blueprint $table) {
-            $table->id("procedure_id");
-            $table->foreignId("diagnosis_id")->references("diagnosis_id")->on("diagnosis")->nullable(true);
-            $table->string("step");
-            $table->string("description");
-            $table->string("image");
-            $table->string("comment");
-            $table->foreignId("user_id")->references("id")->on("users")->nullable(true);
             $table->timestamps();
         });
     }

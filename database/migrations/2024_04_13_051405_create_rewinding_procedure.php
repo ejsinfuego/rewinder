@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('rewinding_procedure', function (Blueprint $table) {
             $table->id("procedure_id");
-            $table->foreignId("diagnosis_result_id")->references("result_id")->on("diagnosis_result")->nullable(true);
+            $table->foreignId("diagnosis_id")->references("diagnosis_id")->on("diagnosis")->nullable(true);
             $table->string("step");
             $table->string("description");
             $table->string("image");
