@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/generatorForm', function(){
         return Inertia::render('GeneratorFormPage');
     })->name('generatorForm');
+    Route::post('approve/{generator}', [GeneratorController::class, 'approve'])->name('generator.approve');
 });
 
 

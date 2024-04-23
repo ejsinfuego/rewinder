@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Inertia\Inertia;
+use App\Models\Diagnosis;
 use App\Models\Generator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
-use App\Models\Diagnosis;
+use Illuminate\Support\Facades\Auth;
 
 class GeneratorController extends Controller
 {
@@ -16,15 +18,45 @@ class GeneratorController extends Controller
      */
     public function index()
     {
-        $generators = Generator::with('diagnosis')->get()->where('user_id', auth()->user()->id)->toArray();
+        $role = User::where('id', auth()->user()->id)->first()->hasRole('admin');
+
+        $role ? $generators = Generator::with('diagnosis')->paginate(10) :
+        $generators = Generator::with('diagnosis')->where('user_id', auth()->user()->id)->paginate(10);
+
+
         return Inertia::render('Dashboard', [
             'generators' => $generators,
         ]);
     }
 
+    public function approve(Generator $generator)
+    {
+        $generator->status = true;
+
+        $role = User::where('id', auth()->user()->id)->first()->hasRole('admin');
+
+        $role ? $generators = Generator::with('diagnosis')->get() :
+        $generators = Generator::with('diagnosis')->get()->where('user_id', auth()->user()->id)->toArray();
+
+        try{
+            $generator->save();
+            return inertia('Dashboard', [
+            'generators' => $generators,
+            'message' => 'success'
+        ])->with('success', 'Generator Approved Successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard');
+
+        }
+
+
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
+
     public function create()
     {
         //
@@ -118,5 +150,6 @@ class GeneratorController extends Controller
     public function destroy(Generator $generator)
     {
         //
+        $generator->delete();
     }
 }
