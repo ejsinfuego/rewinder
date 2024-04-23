@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Generator extends Model
 {
@@ -15,7 +16,6 @@ class Generator extends Model
     //     'serial_number',
     //     'user_id',
     // ];
-
     public function user(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
@@ -24,5 +24,10 @@ class Generator extends Model
     public function rewindingProcedure(): BelongsToMany
     {
         return $this->belongsToMany(RewindingProcedure::class);
+    }
+
+    public function diagnosis(): HasMany
+    {
+        return $this->HasMany(Diagnosis::class);
     }
 }

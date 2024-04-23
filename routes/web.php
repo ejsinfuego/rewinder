@@ -19,9 +19,19 @@ Route::get('/', function () {
 
 Route::post('/testFormula', [GeneratorController::class,'store'])->middleware(['auth', 'verified'])->name('testFormula');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/testFormula', [GeneratorController::class, 'store'])->name('testFormula');
+    Route::get('/diagnosisResult/{generator}/show', [GeneratorController::class, 'show'])->name('generator.show');
+    Route::get('/dashboard', [GeneratorController::class, 'index'])->name('dashboard');
+    Route::get('/generatorForm', function(){
+        return Inertia::render('GeneratorFormPage');
+    })->name('generatorForm');
+    Route::post('approve/{generator}', [GeneratorController::class, 'approve'])->name('generator.approve');
+});
 
 
 Route::middleware('auth')->group(function () {

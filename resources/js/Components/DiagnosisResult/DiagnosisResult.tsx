@@ -63,7 +63,10 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
             </CardHeader>
             <CardContent>
             <div>
-          {diagnosisResult.map((diagnosis, index) => (
+        {diagnosisResult.map((diagnosis: {
+            step: string,
+            description: string,
+        }, index: number) => (
             <div
               key={index}
               className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
@@ -84,9 +87,6 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
         </div>
 
             </CardContent>
-            <CardFooter>
-                <Button className="rounded">Save</Button>
-            </CardFooter>
         </Card>
     </div>
 
