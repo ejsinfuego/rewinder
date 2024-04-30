@@ -106,6 +106,7 @@ export default function Register() {
                     <SelectContent>
                         <SelectGroup>
                         <SelectLabel>User Type</SelectLabel>
+                        <SelectItem value="1">Supervisor</SelectItem>
                         <SelectItem value="2">Client</SelectItem>
                         <SelectItem value="3">Rewinder</SelectItem>
                         </SelectGroup>

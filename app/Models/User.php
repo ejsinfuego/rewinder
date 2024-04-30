@@ -51,6 +51,8 @@ class User extends Authenticatable
 
     public function generator(): HasMany
     {
-        return $this->hasMany(Generator::class);
+        return $this->hasMany(Generator::class, 'generator_users');
     }
+
+
 }

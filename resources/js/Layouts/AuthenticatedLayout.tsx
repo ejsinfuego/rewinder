@@ -1,11 +1,12 @@
-import { useState, PropsWithChildren, ReactNode } from "react";
-import ApplicationLogo from "@/Components/ApplicationLogo";
+import React, { useState, PropsWithChildren, ReactNode } from "react";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
 import { User } from "@/types";
-
+import { Input } from '@/Components/ui/input'
+import { Button } from "@/Components/ui/button";
+import { Search } from "lucide-react"
 export default function Authenticated({
     user,
     header,
@@ -14,6 +15,7 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+    const [search, setSearch] = React.useState<string>("")
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
@@ -33,6 +35,13 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    href={route("generatorForm")}
+                                    active={route().current("generatorForm")}
+                                >
+                                    Test Generator
+                                </NavLink>
+
                             </div>
                         </div>
 
@@ -139,6 +148,7 @@ export default function Authenticated({
                         </ResponsiveNavLink>
                     </div>
 
+
                     <div className="pt-4 pb-1 border-t border-gray-200">
                         <div className="px-4">
                             <div className="font-medium text-base text-gray-800">
@@ -167,9 +177,22 @@ export default function Authenticated({
 
             {header && (
                 <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex">
+                        <div className="flex w-full">
                         {header}
+                        </div>
+                        <div className="flex w-full max-w-sm items-end">
+                            <Input type="text" placeholder="serial number or job order"
+                            onChange={(e) => {
+
+                                setSearch(e.target.value)
+                                }}
+                            />
+                            <Link href={'/search/'+search} only={['results']} >
+                        <Button><Search ></Search>  </Button></Link>
                     </div>
+                    </div>
+
                 </header>
             )}
 

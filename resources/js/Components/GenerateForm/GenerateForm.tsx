@@ -19,14 +19,29 @@ import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { ArrowLeftIcon } from "lucide-react";
-import { useForm as submitForm } from '@inertiajs/react';
+import { useForm as submitForm, usePage } from '@inertiajs/react';
 import { isForRewind, mainFormula, jobOrderGenerator, damage } from "@/lib/utils";
 import DiagnosisResult from "../DiagnosisResult/DiagnosisResult";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/Components/ui/select"
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
 
 
 
 interface GenerateFormProps {}
 
+interface AdminType {
+    id: number,
+    name: string
+}
 
 const GenerateForm: FC<GenerateFormProps> = () => {
     const [hide, setHide] = useState(false)
@@ -35,7 +50,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     const [diagnosis, setDiagnosis] = useState("")
     const [results, setResults] = useState(null)
     const [diagnosisLoad, setDiagnosisLoad] = useState(false)
-
+    const [approver, approverChange] = useState("")
     const { post, setData, data } = submitForm({
         serialNumber: "",
         kVa: 0,
@@ -49,6 +64,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         manpower: 0,
         materials: "",
         prediction: "",
+        approver: 0,
     })
 
 
@@ -67,6 +83,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         exciter: z.string(),
         manpower: z.number(),
         materials: z.string(),
+        approver: z.string(),
 
     })
 
@@ -86,6 +103,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
             materials: "",
             prediction: 0,
             jobOrder: "",
+            approver: approver,
         },
     })
 
@@ -160,8 +178,9 @@ const GenerateForm: FC<GenerateFormProps> = () => {
             setDiagnosisLoad(false)
         }, 1000)
     }
-
+    console.log(approver)
     const saveData = () => {
+        form.setValue('approver', approver)
         setData(form.getValues())
         post(route('testFormula'))
     }
@@ -178,6 +197,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         }
     }, [form.getValues("step1"), form.getValues("step2"), form.getValues("step3"), form.getValues("step4")])
 
+    const admins = usePage().props.admins
 
     return (
     <>
@@ -190,8 +210,28 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         </div>
         </> :
         <>
-        <div className="flex justify-center">
-        <DiagnosisResult diagnosisResult={results} />
+        <div className="flex flex-col">
+        <DiagnosisResult diagnosisResult={results}/>
+        <div className="mt-4">
+                    <InputLabel htmlFor="role" value="User Type" />
+                    <Select onValueChange={(e) => {
+                        approverChange(e)
+                        form.setValue('approver', e)
+                    }}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Approver" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {
+                                    (admins as AdminType[]).map((ad) => (
+                                        <SelectItem key={ad.id} value={ad.id}>{ad.name}</SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
         <Button onClick={saveData} className="rounded">Save</Button>
         </div>
 
@@ -239,7 +279,6 @@ const GenerateForm: FC<GenerateFormProps> = () => {
                         }else{
                             form.setValue("kVa", convertToNumber(e.target.value))
                         }
-
                     }
                 } />
               </FormControl>

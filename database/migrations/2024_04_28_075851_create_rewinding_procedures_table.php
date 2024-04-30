@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rewinding_procedure', function (Blueprint $table) {
+        Schema::create('rewinding_procedures', function (Blueprint $table) {
             $table->id("procedure_id");
-            $table->foreignId("diagnosis_id")->references("diagnosis_id")->on("diagnosis")->nullable(true);
+            $table->foreignId("generator_id")->references("id")->on("generators")->nullable(true);
             $table->string("step");
-            $table->string("description");
-            $table->string("image");
-            $table->string("comment");
+            $table->string("description")->nullable();
+            $table->string("image")->nullable();
+            $table->string("comment")->nullable();
             $table->foreignId("user_id")->references("id")->on("users")->nullable(true);
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rewinding_procedure');
+        Schema::dropIfExists('rewinding_procedures');
     }
 };
