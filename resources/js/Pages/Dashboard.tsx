@@ -1,7 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
-import GenerateForm from "@/Components/GenerateForm/GenerateForm";
 import GeneratorTable from "@/Components/GeneratorsTable/GeneratorsTable";
 import { Button } from "@/Components/ui/button";
 export default function Dashboard({ auth, generators }: PageProps) {
@@ -17,15 +16,10 @@ export default function Dashboard({ auth, generators }: PageProps) {
         >
             <Head title="Dashboard" />
             <div className="flex justify-center pt-3">
-                <Button >
-                    <a href={route('generatorForm')}>
-                    Test Generator
-                    </a>
-                </Button>
+              <h1 className="font-semibold text-xl text-gray-800 leading-tight">List of Generators</h1>
                 </div>
             <div className="flex justify-center mt-6 max-w-full border border-2">
-
-                <GeneratorTable generators={generators} />
+                <GeneratorTable user={auth.user} generators={generators} />
             </div>
         </AuthenticatedLayout>
     );

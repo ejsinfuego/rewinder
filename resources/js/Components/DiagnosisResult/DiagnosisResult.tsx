@@ -8,86 +8,62 @@ import {
     CardHeader,
     CardTitle,
 } from "../ui/card"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/Components/ui/select"
+
 
 interface DiagnosisResultProps {
     //eslint-disable-next-line
     diagnosisResult: any;
 }
 
-const keys = [
-    {'key': 'serial_number', 'title': 'Serial Number'},
-    {'key': 'step1', 'title': 'Step 1 (Insulation Resistance Test)'},
-    {'key': 'step2', 'title': 'Step 2 (Winding Resistance Test)'},
-    {'key': 'step3', 'title': 'Step 3 (Phase Voltage Test)'},
-    {'key': 'step4', 'title': 'Step 4 (Surge Test)'},
-    {'key': 'exciter', 'title': 'Exciter'},
-    {'key': 'rotor', 'title': 'Main Rotor'},
-    {'key': 'stator', 'title': 'Main Stator'},
-    {'key': 'jobOrder', 'title': 'Job Order'},
-    {'key': 'kVa', 'title': 'Rating'},
-    {'key': 'prediction', 'title': 'Estimate'},
-    {'key': 'manpower', 'title': 'Manpower'},
-    {'key': 'materials', 'title': 'Material Ready'},
-    {'key': 'result', 'title': 'Diagnosis Result'},
-]
-
-const damagedOrNot = (step: string, description: string) => {
-    const parts = step==='exciter'||step==='stator'||step==='rotor' ? true : false
-
-    const steps = step==='step1'||step==='step2'||step==='step3'||step==='step4' ? true : false
-
-    if(parts){
-        return description === 'true' ? 'Damaged' : 'Not Damaged'
-    }else if(steps){
-        return description === 'true' ? 'Passed' : 'Failed'
-    }else if(step === 'materials'){
-        return description === 'true' ? 'Ready' : 'Not Ready'
-    }else if(step === 'kVa'){
-        return description+' kVA'
-    }else if(step === 'prediction'){
-        return description+' Days'
-    }else{
-        return description
-    }
-}
 
 const DiagnosisResult: FC<DiagnosisResultProps> = (
     { diagnosisResult }
+
 ) => {
-    console.log(diagnosisResult)
+    const mappedData = diagnosisResult.reduce((acc, curr) => {
+        acc[curr.step] = curr.description;
+        return acc;
+    }, {});
+
+    console.log(mappedData);
     return (
-    <div>
-        <Card className="w-96 rounded">
+    <div className="py-2">
+        <Card className="w-full rounded text-gray-600">
             <CardHeader>
             <CardTitle>Diagnosis Result</CardTitle>
             </CardHeader>
             <CardContent>
-            <div>
-        {diagnosisResult.map((diagnosis: {
-            step: string,
-            description: string,
-        }, index: number) => (
-            <div
-              key={index}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
-            >
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {
-                    keys.find((key) => key.key === diagnosis.step)?.title
-                  } : {
-
-                    damagedOrNot(diagnosis.step, diagnosis.description)
-                  }
-                </p>
-              </div>
+            <div className=" justify-center">
+            <h2 className="font-semibold text-5xl text-gray-600 text-center leading-tight">{
+                mappedData.prediction
+            }</h2>
+            <h3 className="font-semibold text-lg text-center leading-tight">Estimated Days of Rewinding Duration</h3>
             </div>
-          ))}
-        </div>
-
+            <div className="grid grid-cols-2 p-2 gap-3 m-2">
+            <h2 className="flex font-normal text-m leading-tight">Rating: {mappedData.kVa} kVa</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Serial Number: {mappedData.serialNumber}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 1: {mappedData.step1 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 2: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 3: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 4: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Rotor: {mappedData.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Stator: {mappedData.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Exciter: {mappedData.exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Materials: {mappedData.materials}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Manpower: {mappedData.manpower}</h2>
+            </div>
             </CardContent>
         </Card>
+
     </div>
 
     )

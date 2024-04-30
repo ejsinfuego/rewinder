@@ -9,11 +9,7 @@ export default function GeneratorResultPage({ auth,
             name: 'Generator Name'
         }
     },
-    diagnosis={
-        diagnosis: {
-            name: 'Diagnosis Name'
-    }
- }}: PageProps) {
+    rewinding={}}: PageProps) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -26,7 +22,7 @@ export default function GeneratorResultPage({ auth,
         >
             <Head title="Result" />
             <div className="flex justify-center mt-6 max-w-full border border-2">
-            <GeneratorResult generator={generator} diagnosis={diagnosis} />
+            <GeneratorResult generator={generator} rewinding={rewinding} />
             </div>
             <div className="flex justify-center mt-6">
 

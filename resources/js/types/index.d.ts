@@ -10,6 +10,7 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
+        role: string;
     };
     generator: GeneratorResultPage;
     generators: any;

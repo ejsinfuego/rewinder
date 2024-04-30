@@ -23,7 +23,8 @@ return new class extends Migration
             $table->boolean("exciter");
             $table->string("result");
             $table->integer("prediction");
-            $table->integer("monpower");
+            $table->integer("manpower")->nullable(true);
+            $table->boolean("materials")->nullable(true);
             $table->foreignId("generator_id")->references("id")->on("generators")->nullable(true);
             $table->string("description")->nullable(true);
             $table->integer("kVa")->nullable(true);

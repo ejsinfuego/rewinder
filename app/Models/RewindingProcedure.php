@@ -12,16 +12,16 @@ class RewindingProcedure extends Model
 
     protected $fillable = [
         'step',
-        'diagnosis_result_id',
         'image',
         'description',
         'comment',
-        'user_id'
+        'diagnosis_id',
+        'image'
     ];
 
-    public function result(): BelongsTo
+    public function generator(): BelongsTo
     {
-        return $this->belongsTo(Result::class);
+        return $this->belongsTo(Generator::class);
     }
 
     public function users(): BelongsTo

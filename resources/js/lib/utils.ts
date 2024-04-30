@@ -34,6 +34,7 @@ export const isForRewind = ({ step_1, step_2, step_3, step_4}: forRewind) => {
 
 export const damage = ({damage } : {damage: Damage}) => {
     //false means not damaged
+
     const exciterOnly = damage.exciter === 'true' && damage.rotor === 'false' && damage.stator === 'false';
 
     const statorOnly = damage.rotor === 'false' && damage.stator === 'true' && damage.exciter === 'false';
