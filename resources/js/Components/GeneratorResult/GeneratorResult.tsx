@@ -31,13 +31,18 @@ import {
     Sheet,
     SheetContent,
     SheetDescription,
+    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
   } from "../ui/sheet"
 import { Label } from "../ui/label"
 import dayjs from "dayjs"
-import { get } from "http";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/Components/ui/popover"
 
 
 
@@ -53,6 +58,7 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
     const { token } = theme.useToken();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+    const [comment, setComment] = useState<string>("");
     const steps = [
         {
           title: 'Data Gathering',
@@ -106,7 +112,7 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
        }
       ];
 
-
+    console.log(rewinding)
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (e.target.files && e.target.files.length) {
             setSelectedFile(e.target.files[0]);
@@ -145,7 +151,7 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
                     current = item.index
                 }
             })
-            return current === 0 ? 0 : current + 1
+            return current === 0 ? 1 : current + 1
         }
 
         const current = getCurrent()
@@ -179,7 +185,7 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
                             <div className="text-yellow-500">On Going</div>
                         }
                     </SheetTrigger>
-                    <SheetContent className="w-[600px] sm:w-[540px]">
+                    <SheetContent className="w-[600px] sm:w-[540px] flex-col flex">
                         <SheetHeader>
                             <SheetTitle className="text-lg">Update {item.title}</SheetTitle>
                             <SheetDescription>
@@ -195,6 +201,10 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
                                         </CardHeader>
                                         <CardDescription>
                                             <div className="justify-start">
+                                            <Label className="text-start">by {rewinding.filter(f => f.step === item.content).find(f => f.user).user.name}
+                                            </Label>
+                                            </div>
+                                            <div className="justify-start">
                                             <Label className="text-center">Description
                                             </Label>
                                             <Textarea type="text" readOnly value={rewinding
@@ -204,10 +214,20 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
                                             <div className="justify-center">
                                             <Label className="text-center">Image
                                             </Label>
-                                                <img src={`/storage/${(rewinding
+                                            <Popover>
+                                            <PopoverTrigger><img src={`/storage/${(rewinding
                                                     .filter(f => f.step === item.content)
-                                                    .find(f => f.image)).image}`} alt="step" />
+                                                    .find(f => f.image)).image}`} alt="step" /></PopoverTrigger>
+                                                <PopoverContent sideOffset={-380}
+                                                align={"end"}
+                                                className="w-3/4"
+                                                ><img src={`/storage/${(rewinding
+                                                    .filter(f => f.step === item.content)
+                                                    .find(f => f.image)).image}`} alt="step" /></PopoverContent>
+
+                                            </Popover>
                                             </div>
+
                                         </CardDescription>
                                     </CardContent>
                                 </Card>
@@ -251,9 +271,37 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
                                         <Button className="button" >Submit</Button>
                                     </form>
                                 </Form>}
+                                <div className="justify-end py-2">
+                                <div className="text-start">Comments</div>
+                                <div className="text-start border border-gray-200 p-2">
+                                    {rewinding.filter(f => f.step === item.content).map(f => (
+                                        <div key={f.id} className="flex flex-col justify-between">
+                                            <div className="font-bold">{f.user.name}</div>
+                                            <div>{f.comments.map(f => f.comment)}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                </div>
                             </SheetDescription>
                         </SheetHeader>
+                        <SheetFooter className="justify-end">
+                        <Textarea onChange={(e) => {
+                            setComment(e.target.value)
+
+                        }} className="mt-auto" />
+                        <Button
+                         onClick={() => {
+                            router.visit('/addComment', {
+                                method: 'post',
+                                data: {comment, rewinding_id: rewinding.filter(f => f.step === item.content).find(f => f.procedure_id).procedure_id},
+                                forceFormData: true,
+                                only: ['rewinding'],
+                            })
+                         }}
+                         className="button mt-auto">Comment</Button>
+                    </SheetFooter>
                     </SheetContent>
+
                 </Sheet>
                 </>)  : <div className="text-red-500">Not Completed</div>,
             index: item.index,

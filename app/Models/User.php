@@ -54,5 +54,10 @@ class User extends Authenticatable
         return $this->hasMany(Generator::class, 'generator_users');
     }
 
+    public function rewindingProcedure(): HasMany
+    {
+        return $this->hasMany(RewindingProcedure::class);
+    }
+
 
 }

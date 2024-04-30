@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\RewindingProcedure;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GeneratorController;
 use App\Http\Controllers\GeneratorUserController;
@@ -22,7 +23,6 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function() {
     Route::get('/approve/{generator}', [GeneratorController::class, 'approve'])->name('generator.approve');
     Route::get('/grantAccess/{generatorUser}', [GeneratorUserController::class, 'approve'])->name('grantAccess');
 });
-w
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/testFormula', [GeneratorController::class, 'store'])->name('testFormula');
     Route::get('/diagnosisResult/{generator}/show', [GeneratorController::class, 'show'])->name('generator.show');
@@ -33,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/accessRequest/{generator}', [GeneratorController::class, 'accessRequest'])->name('accessRequest');
 
     Route::post('/requestAccess', [GeneratorController::class, 'requestAccess'])->name('requestAccess');
+
+    Route::post('/addComment', [CommentController::class, 'store'])->name('addComment');
 });
 
 

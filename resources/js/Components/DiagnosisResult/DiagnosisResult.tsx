@@ -34,7 +34,6 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
         return acc;
     }, {});
 
-    console.log(mappedData);
     return (
     <div className="py-2">
         <Card className="w-full rounded text-gray-600">
