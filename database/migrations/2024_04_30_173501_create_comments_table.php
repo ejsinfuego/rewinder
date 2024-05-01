@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('generators', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string("job_order");
-            $table->foreignId("user_id")->references("id")->on("users")->nullable(true);
-            $table->string("serial_number")->unique();
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('rewinding_id')->references('procedure_id')->on('rewinding_procedures');
+            $table->string('comment');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('generators');
+        Schema::dropIfExists('comments');
     }
 };

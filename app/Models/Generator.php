@@ -17,8 +17,17 @@ class Generator extends Model
     //     'serial_number',
     //     'user_id',
     // ];
+     /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
 
-    public function toSearchableArray()
+     public function searchableAs(): string
+    {
+        return 'generators_index';
+    }
+    public function toSearchableArray(): array
     {
         $array = $this->toArray();
 
