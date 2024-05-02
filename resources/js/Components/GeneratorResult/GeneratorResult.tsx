@@ -151,7 +151,7 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
                     current = item.index
                 }
             })
-            return current === 0 ? 1 : current + 1
+            return current === 0 ? current : current + 1
         }
 
         const current = getCurrent()

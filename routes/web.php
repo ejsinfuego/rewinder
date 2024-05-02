@@ -19,16 +19,18 @@ Route::get('/', function () {
 Route::get('/search/{variable}', [GeneratorController::class, 'search'])->name('search');
 
 
-Route::middleware(['auth', 'verified', 'role:admin'])->group(function() {
+Route::middleware(['auth', 'verified', 'role:admin', 'role:rewinder'])->group(function() {
     Route::get('/approve/{generator}', [GeneratorController::class, 'approve'])->name('generator.approve');
     Route::get('/grantAccess/{generatorUser}', [GeneratorUserController::class, 'approve'])->name('grantAccess');
-});
-Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/testFormula', [GeneratorController::class, 'store'])->name('testFormula');
-    Route::get('/diagnosisResult/{generator}/show', [GeneratorController::class, 'show'])->name('generator.show');
-    Route::get('/dashboard', [GeneratorController::class, 'index'])->name('dashboard');
     Route::get('/generatorForm', [GeneratorController::class, 'generatorForm'])->name('generatorForm');
     Route::post('/generatorUpdate', [RewindingProcedureController::class, 'store'])->name('rewinding.update');
+});
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/diagnosisResult/{generator}/show', [GeneratorController::class, 'show'])->name('generator.show');
+    Route::get('/dashboard', [GeneratorController::class, 'index'])->name('dashboard');
+
 
     Route::get('/accessRequest/{generator}', [GeneratorController::class, 'accessRequest'])->name('accessRequest');
 
