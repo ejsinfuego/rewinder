@@ -88,7 +88,7 @@ class GeneratorController extends Controller
     {
         $userid = auth()->user()->id;
         $params = $request->validate([
-            'serialNumber' => 'required|unique:generator,column,except,id',
+            'serialNumber' => 'required',
             'jobOrder' => 'required',
             'step1' => 'required',
             'step2' => 'required',
@@ -155,11 +155,11 @@ class GeneratorController extends Controller
         $role = User::where('id', auth()->user()->id)->first()->hasRole('admin');
 
         $checkAccess = GeneratorUser::where('user_id', $userId)->where('generator_id', $generator->id)->first();
+        //get the role of user
+
 
         if($role){
-            $rewinding = RewindingProcedure::with('user')->with('comments')->where('generator_id', $generator->id)->whereHas('comments', function ($query){
-                $query->where('user_id', auth()->user()->id);
-            })->get();
+            $rewinding = RewindingProcedure::with('user')->with('comments')->where('generator_id', $generator->id)->get();
         }else{
             if($checkAccess){
                 $rewinding = RewindingProcedure::with('user')->with('comments')->where('generator_id', $generator->id)->get();

@@ -8,10 +8,11 @@ import { Input } from '@/Components/ui/input'
 import { Button } from "@/Components/ui/button";
 import { Search } from "lucide-react"
 export default function Authenticated({
+    role,
     user,
     header,
     children,
-}: PropsWithChildren<{ user: User; header?: ReactNode }>) {
+}: PropsWithChildren<{ user: User, role: string, header?: ReactNode }>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -35,12 +36,15 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink
+                                {role !== 'client' && (
+                                    <NavLink
                                     href={route("generatorForm")}
                                     active={route().current("generatorForm")}
-                                >
-                                    Test Generator
+                                >{role}
+                                Test Generator
                                 </NavLink>
+                                )}
+
 
                             </div>
                         </div>

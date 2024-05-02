@@ -62,8 +62,11 @@ export default function HomePage({ results }: HomePageProps) {
                 </ScrollArea>
             </div>
             )
-
-            }
+        }
+          <div className="flex justify-center text-gray-500">
+            <Link className="font-semibold" href={'/login'}>Login</Link> {' | '}
+            <Link className="font-semibold" href={'/register'}>{' '}Register</Link>
+            </div>
         </Guest>
     )
 }
