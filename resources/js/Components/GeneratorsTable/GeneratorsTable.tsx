@@ -181,7 +181,7 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
             <h2 className=" flex font-normal text-m leading-tight">Rotor: {generator.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Stator: {generator.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Exciter: {generator.exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Materials: {generator.materials}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Materials: {generator.materials === "true" ? "Available" : "Not Available"}</h2>
             <h2 className=" flex font-normal text-m leading-tight">Manpower: {generator.manpower}</h2>
             </div>
                                         <div className="flex justify-start pt-5">
