@@ -29,7 +29,7 @@ class GeneratorController extends Controller
 
         $role ? $generators = Generator::with('diagnosis')->with('generatorUsers')->with('user')->orderBy('created_at', 'desc')->paginate(10) : $generators = '';
 
-        $userRole == 'rewinder' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->with('user')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
+        $userRole == 'rewinder' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
 
         $userRole == 'client' ? $generators = Generator::with('diagnosis')->whereIn('id', $generatorAccess)
         ->whereHas('generatorUsers', function ($query) {

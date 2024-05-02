@@ -43,6 +43,7 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/Components/ui/popover"
+import { get } from "http";
 
 
 
@@ -148,13 +149,16 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
             var current = 0;
             steps.map((item) => {
                 if (updatesList.includes(item.content)) {
+
                     current = item.index
+                    console.log('---curr', current)
                 }
             })
-            return current === 0 ? current : current + 1
+            return current === 0 && current === null ? current : current + 1
         }
 
         const current = getCurrent()
+        console.log('---current', current)
         form.setValue('generator_id', generator.id)
         form.setValue('file', selectedFile)
         form.setValue('step', steps[current].content)

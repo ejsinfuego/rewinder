@@ -97,9 +97,9 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
 
     }) => {
         const diagnosis = generator.diagnosis[0];
-
+        console.log(generator)
         const userRequest = generator?.generator_users?.map((users) => {
-           const user = generator.user.find((user) => user.id === users.user_id);
+           const user = generator?.user?.find((user) => user.id === users.user_id);
 
            return {
                 'id': users.id,
@@ -125,9 +125,9 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
             'step2': diagnosis?.step_2 ? 'Passed' : 'Fail' || '',
             'step3': diagnosis?.step_3 ? 'Passed' : 'Fail' || '',
             'step4': diagnosis?.step_4 ? 'Passed' : 'Fail' || '',
-            'rotor': diagnosis?.rotor ? 'Passed' : 'Fail' || '',
-            'stator': diagnosis?.stator ? 'Passed' : 'Fail' || '',
-            'exciter': diagnosis?.exciter ? 'Passed' : 'Fail' || '',
+            'rotor': diagnosis?.rotor ? 'Damaged' : 'Not Damaged' || '',
+            'stator': diagnosis?.stator ? 'Damaged' : 'Not Damaged' || '',
+            'exciter': diagnosis?.exciter ? 'Damaged' : 'Not Damaged' || '',
             'prediction': diagnosis?.prediction || '',
             'users': userRequest || '',
 
@@ -174,13 +174,13 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
                                     <div className="grid grid-cols-2 p-2 gap-3 m-2">
             <h2 className="flex font-normal text-m leading-tight">Rating: {generator.rating} kVa</h2>
             <h2 className=" flex font-normal text-m leading-tight">Serial Number: {generator.serial_number}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.step1 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Rotor: {generator.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Stator: {generator.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Exciter: {generator.exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.step1}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.step2 }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.step2}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.step2}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Rotor: {generator.rotor}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Stator: {generator.stator}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Exciter: {generator.exciter}</h2>
             <h2 className=" flex font-normal text-m leading-tight">Materials: {generator.materials === "true" ? "Available" : "Not Available"}</h2>
             <h2 className=" flex font-normal text-m leading-tight">Manpower: {generator.manpower}</h2>
             </div>
@@ -200,7 +200,7 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
 }>{generator.status === 'For Approval' ? 'Still for Aproval': 'View'}</Button>                                   }
 
                                         </div>
-                                        {generator.users && (<>
+                                        {role === 'admin' && (<>
                                             <div className="justify-centerp pt-2">
                                                 <h1 className="text-lg">User Access</h1>
                                             </div>
