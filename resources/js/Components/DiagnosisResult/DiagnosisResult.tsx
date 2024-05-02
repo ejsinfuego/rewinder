@@ -8,16 +8,6 @@ import {
     CardHeader,
     CardTitle,
 } from "../ui/card"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/Components/ui/select"
-
 
 interface DiagnosisResultProps {
     //eslint-disable-next-line
