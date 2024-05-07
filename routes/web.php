@@ -25,9 +25,10 @@ Route::middleware(['auth', 'verified', 'role:admin|rewinder'])->group(function()
     Route::post('/testFormula', [GeneratorController::class, 'store'])->name('testFormula');
     Route::get('/generatorForm', [GeneratorController::class, 'generatorForm'])->name('generatorForm');
     Route::post('/generatorUpdate', [RewindingProcedureController::class, 'store'])->name('rewinding.update');
+    Route::post('/approveProcedure', [RewindingProcedureController::class, 'approve'])->name('rewinding.approve');
 });
 Route::middleware(['auth', 'verified'])->group(function () {
-
+    route::get('/rewinder/viewSummary/{generator}', [RewindingProcedureController::class, 'show'])->name('rewinder.viewSummary');
     Route::get('/diagnosisResult/{generator}/show', [GeneratorController::class, 'show'])->name('generator.show');
     Route::get('/dashboard', [GeneratorController::class, 'index'])->name('dashboard');
 

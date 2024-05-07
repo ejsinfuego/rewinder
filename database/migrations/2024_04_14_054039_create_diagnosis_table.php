@@ -17,12 +17,12 @@ return new class extends Migration
             $table->boolean("step_2");
             $table->boolean("step_3");
             $table->boolean("step_4");
-            $table->boolean("step_5");
-            $table->boolean("stator");
-            $table->boolean("rotor");
-            $table->boolean("exciter");
+            $table->boolean("step_5")->nullable(true);
+            $table->boolean("stator")->nullable(true);
+            $table->boolean("rotor")->nullable(true);
+            $table->boolean("exciter")->nullable(true);
             $table->string("result");
-            $table->integer("prediction");
+            $table->integer("prediction")->nullable(true);
             $table->integer("manpower")->nullable(true);
             $table->boolean("materials")->nullable(true);
             $table->foreignId("generator_id")->references("id")->on("generators")->nullable(true);

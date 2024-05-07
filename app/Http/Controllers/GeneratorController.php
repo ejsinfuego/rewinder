@@ -94,13 +94,7 @@ class GeneratorController extends Controller
             'step2' => 'required',
             'step3' => 'required',
             'step4' => 'required',
-            'stator' => 'required',
-            'rotor' => 'required',
             'result' => 'required',
-            'manpower' => 'required',
-            'materials' => 'required',
-            'exciter' => 'required',
-            'kVa' => 'required',
         ]);
 
         $genId = Generator::insertGetId([
@@ -152,20 +146,27 @@ class GeneratorController extends Controller
 
         $userId = auth()->user()->id;
 
-        $role = User::where('id', auth()->user()->id)->first()->hasRole('admin');
+        $role = User::where('id', auth()->user()->id)->first()->hasRole('admin') ? 'admin' : (User::where('id', auth()->user()->id)->first()->hasRole('rewinder') ? 'rewinder' : 'client');
 
         $checkAccess = GeneratorUser::where('user_id', $userId)->where('generator_id', $generator->id)->first();
         //get the role of user
-
-
-        if($role){
-            $rewinding = RewindingProcedure::with('user')->with('comments')->where('generator_id', $generator->id)->get();
-        }else{
+        if($role === 'admin'){
+            //get all reinding procedures where generator_id is equal to the generator id and status is equal to pending
+            $rewinding = RewindingProcedure::with('comments.user', 'user')->with('user')->where('generator_id', $generator->id)->get();
+        }else if($role === 'rewinder'){
             if($checkAccess){
-                $rewinding = RewindingProcedure::with('user')->with('comments')->where('generator_id', $generator->id)->get();
+                //get all rewinding procedures where generator_id is equal to the generator id and status is equal to approved
+                $rewinding = RewindingProcedure::with('user')->with('comments.user', 'user')->where('generator_id', $generator->id)->get();
         }else{
             return redirect()->route('accessRequest', $generator->id);
         }
+        }else if($role === 'client'){
+            if($checkAccess){
+                //get all rewinding procedures where generator_id is equal to the generator id and status is equal to approved
+                $rewinding = RewindingProcedure::with('user')->with('comments.user', 'user')->where('generator_id', $generator->id)->where('status', 'approved')->get();
+            }else{
+                return redirect()->route('accessRequest', $generator->id);
+            }
         }
         return Inertia::render('GeneratorResultPage', [
             'role' => $role,
