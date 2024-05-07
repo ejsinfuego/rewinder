@@ -2,20 +2,19 @@ import React, { useState, PropsWithChildren, ReactNode } from "react";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { User } from "@/types";
 import { Input } from '@/Components/ui/input'
 import { Button } from "@/Components/ui/button";
 import { Search } from "lucide-react"
 export default function Authenticated({
-    role,
     user,
     header,
     children,
 }: PropsWithChildren<{ user: User, role: string, header?: ReactNode }>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
-
+    const role = usePage().props.role
     const [search, setSearch] = React.useState<string>("")
     return (
         <div className="min-h-screen bg-gray-100">
@@ -40,7 +39,7 @@ export default function Authenticated({
                                     <NavLink
                                     href={route("generatorForm")}
                                     active={route().current("generatorForm")}
-                                >{role}
+                                >
                                 Test Generator
                                 </NavLink>
                                 )}

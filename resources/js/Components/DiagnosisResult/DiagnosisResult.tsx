@@ -40,14 +40,14 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
             <div className="grid grid-cols-2 p-2 gap-3 m-2">
             <h2 className="flex font-normal text-m leading-tight">Rating: {mappedData.kVa} kVa</h2>
             <h2 className=" flex font-normal text-m leading-tight">Serial Number: {mappedData.serialNumber}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 1: {mappedData.step1 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 2: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 3: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 4: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 1 - IR Test: {mappedData.step1 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 2 - Winding Resistance Test: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 3 -Phase Voltage Test: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 4 - Surge Test: {mappedData.step2 == "true" ? 'Passed' : 'Failed' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Rotor: {mappedData.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Stator: {mappedData.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Exciter: {mappedData.exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Materials: {mappedData.materials}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Materials: {mappedData.materials == "true" ? 'Available': 'Not Available'}</h2>
             <h2 className=" flex font-normal text-m leading-tight">Manpower: {mappedData.manpower}</h2>
             </div>
             </CardContent>

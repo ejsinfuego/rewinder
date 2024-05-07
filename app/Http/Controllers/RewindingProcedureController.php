@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Generator;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 use App\Models\RewindingProcedure;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 class RewindingProcedureController extends Controller
 {
     /**
@@ -52,7 +55,16 @@ class RewindingProcedureController extends Controller
             'user_id' => $request->user_id
         ]);
 
-        
+
+
+
+    }
+
+    public function approve(Request $request, RewindingProcedure $rewindingProcedure)
+    {
+
+        RewindingProcedure::where('procedure_id', $request->rewinding_id)->update(['status' => 'approved']);
+
 
 
     }
@@ -60,9 +72,17 @@ class RewindingProcedureController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Generator $generator)
     {
-        //
+
+        $rewindingProcedures = RewindingProcedure::where('generator_id', $generator->id)->get()->sortBy('created_at', SORT_NATURAL);
+        $generator = Generator::with('diagnosis')->where('id', $generator->id)->first();
+
+        return Inertia::render('ViewSummaryPage', [
+            'diagnoses' => $rewindingProcedures,
+            'generator' => $generator,
+        ]);
+
     }
 
     /**

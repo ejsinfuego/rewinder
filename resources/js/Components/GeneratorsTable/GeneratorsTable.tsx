@@ -23,11 +23,10 @@ import { message } from "antd";
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
+    PaginationItem,
   } from "@/Components/ui/pagination";
   import {
     Popover,
@@ -67,7 +66,7 @@ interface GeneratorTableProps {
 }
 
 
-const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
+const GeneratorTable = ({ generators }: GeneratorTableProps) => {
 
     const role = usePage().props.role;
 
@@ -97,7 +96,6 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
 
     }) => {
         const diagnosis = generator.diagnosis[0];
-        console.log(generator)
         const userRequest = generator?.generator_users?.map((users) => {
            const user = generator?.user?.find((user) => user.id === users.user_id);
 
@@ -115,7 +113,7 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
             'serial_number' : generator?.serial_number || '',
             'job_order' : generator?.job_order || '',
             'rating' : diagnosis?.kVa || 0,
-            'result': diagnosis?.result || '',
+            'result': diagnosis?.result == 'rewind' ? 'REWIND' : 'RECONDITION' || '',
             'createdAt': dayjs(generator?.created_at).format('MMMM DD, YYYY H:mm:ss A') || '',
             'status': generator?.status === 'pending' ? 'For Approval' : 'Approved',
             'materials': diagnosis?.materials || '',
@@ -165,6 +163,8 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
                                         <SheetDescription>
                                         </SheetDescription>
                                     </SheetHeader>
+                                    {generator.result === 'REWIND' ?
+                                    <>
                                     <div className=" justify-center">
                                         <h2 className="font-semibold text-5xl text-gray-600 text-center leading-tight">{
                                             generator.prediction
@@ -172,34 +172,63 @@ const GeneratorTable = ({ generators, user }: GeneratorTableProps) => {
                                         <h3 className="font-semibold text-lg text-center leading-tight">Estimated Days of Rewinding Duration</h3>
                                     </div>
                                     <div className="grid grid-cols-2 p-2 gap-3 m-2">
-            <h2 className="flex font-normal text-m leading-tight">Rating: {generator.rating} kVa</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Serial Number: {generator.serial_number}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.step1}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.step2 }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.step2}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.step2}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Rotor: {generator.rotor}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Stator: {generator.stator}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Exciter: {generator.exciter}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Materials: {generator.materials === "true" ? "Available" : "Not Available"}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Manpower: {generator.manpower}</h2>
-            </div>
-                                        <div className="flex justify-start pt-5">
+                                    <h2 className="flex font-normal text-m leading-tight">Rating: {generator.rating} kVa</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Serial Number: {generator.serial_number}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.step1}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.step2 }</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.step2}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.step2}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Rotor: {generator.rotor}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Stator: {generator.stator}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Exciter: {generator.exciter}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Materials: {generator.materials === "true" ? "Available" : "Not Available"}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Manpower: {generator.manpower}</h2>
+                                    </div>
+                                    </>
+                                    :
+                                    <>
+                                    <h2 className="font-semibold text-5xl text-gray-600 text-center leading-tight">{
+                                            generator.result
+                                        }</h2>
+                                    <div className="grid grid-cols-2 p-2 gap-3 m-2">
+                                    <h2 className="flex font-normal text-m leading-tight">Rating: {generator.rating} kVa</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Serial Number: {generator.serial_number}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.step1}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.step2 }</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.step3}</h2>
+                                    <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.step4}</h2>
+                                    </div>
+                                    </>}
 
-                                        {role === 'admin' ? <>{generator.status === 'For Approval' ?
+                                        {role === 'admin' && generator.result === 'REWIND' && <>
+                                        {generator.status === 'For Approval' ?
+                                        <>
                                         <Link href={'approve/'+generator.id}  only={['generators']} as="button" preserveState
                                         onFinish={() => {
                                             message.success('Generator has been approved');
                                         }}
                                         >
-                                            <Button className="rounded-lg" variant="default" size="lg">Approve</Button>
-                                        </Link> : <Button onClick={ () => router.visit(route('generator.show', generator.id))}>View</Button>
-                                        }
-</>: <Button onClick={ () =>
-    generator.status === 'For Approval' ? message.loading('Generator is still for approval') : router.visit(route('generator.show', generator.id))
-}>{generator.status === 'For Approval' ? 'Still for Aproval': 'View'}</Button>                                   }
+                                        <Button className="rounded-lg" variant="default" size="lg">Approve</Button>
+                                        </Link>
 
-                                        </div>
+                                        </> :
+                                        <>
+                                        <Button onClick={ () =>
+                                            generator.status === 'For Approval' ? message.loading('Generator is still for approval') : router.visit(route('generator.show', generator.id))
+                                        }>{generator.status === 'For Approval' ? 'Still for Aproval': 'View'}</Button>
+                                        </>
+                                        }
+                                        </>}
+
+                                        {(role === 'rewinder' || role === 'client') && generator.result === 'REWIND' && <>
+                                        <Button onClick={ () =>
+                                            generator.status === 'For Approval' ? message.loading('Generator is still for approval') : router.visit(route('generator.show', generator.id))
+                                        }>{generator.status === 'For Approval' ? 'Still for Aproval': 'View'}</Button>
+                                        </>
+                                        }
+
+
+
                                         {role === 'admin' && (<>
                                             <div className="justify-centerp pt-2">
                                                 <h1 className="text-lg">User Access</h1>

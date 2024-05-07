@@ -22,19 +22,6 @@ import { ArrowLeftIcon } from "lucide-react";
 import { useForm as submitForm, usePage } from '@inertiajs/react';
 import { isForRewind, mainFormula, jobOrderGenerator, damage } from "@/lib/utils";
 import DiagnosisResult from "../DiagnosisResult/DiagnosisResult";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/Components/ui/select"
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-
-
 
 interface GenerateFormProps {}
 
@@ -51,6 +38,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     const [results, setResults] = useState(null)
     const [diagnosisLoad, setDiagnosisLoad] = useState(false)
     const [approver, approverChange] = useState("")
+    const [numberError, setNumberError] = useState("")
     const { post, setData, data } = submitForm({
         serialNumber: "",
         kVa: 0,
@@ -64,7 +52,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         manpower: 0,
         materials: "",
         prediction: "",
-        approver: 0,
+        // approver: 0,
     })
 
 
@@ -83,7 +71,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         exciter: z.string(),
         manpower: z.number(),
         materials: z.string(),
-        approver: z.string(),
+        // approver: z.string(),
 
     })
 
@@ -103,7 +91,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
             materials: "",
             prediction: 0,
             jobOrder: "",
-            approver: approver,
+            // approver: approver,
         },
     })
 
@@ -122,7 +110,14 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     }
     }, [hide])
     const convertToNumber = (value: string) => {
-        return parseInt(value, 10)
+        //regex that checks
+        const regex = /^[0-9]*$/
+        if(!regex.test(value)){
+            setNumberError("Only numbers are allowed")
+        }else{
+            setNumberError("")
+            return parseInt(value, 10)
+        }
     }
 
     const forRewind = () => {
@@ -149,12 +144,17 @@ const GenerateForm: FC<GenerateFormProps> = () => {
 
     const handleSubmit = () => {
         getPrediction()
+        if(form.getValues("result") === 'rewind'){
         const values = form.getValues()
         const res = values
         //convert the object into flat array
         const result = res ? Object.entries(res).map(([key, value]) => ({ step: key, description: value })) : []
         setResults(result)
         handleDiagnosisLoad()
+        }else{
+            console.log('recon')
+            saveData()
+        }
 
     }
 
@@ -178,7 +178,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
             setDiagnosisLoad(false)
         }, 1000)
     }
-    console.log(approver)
+
     const saveData = () => {
         form.setValue('approver', approver)
         setData(form.getValues())
@@ -197,8 +197,6 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         }
     }, [form.getValues("step1"), form.getValues("step2"), form.getValues("step3"), form.getValues("step4")])
 
-    const admins = usePage().props.admins
-
     return (
     <>
     {results ?
@@ -212,7 +210,8 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         <>
         <div className="flex flex-col">
         <DiagnosisResult diagnosisResult={results}/>
-        <div className="mt-4">
+        {/*disable choices for approval  */}
+        {/* <div className="mt-4">
                     <InputLabel htmlFor="role" value="User Type" />
                     <Select onValueChange={(e) => {
                         approverChange(e)
@@ -231,7 +230,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                </div>
+                </div> */}
         <Button onClick={saveData} className="rounded">Save</Button>
         </div>
 
@@ -263,30 +262,33 @@ const GenerateForm: FC<GenerateFormProps> = () => {
           )}
         />
         </div>
-        <div className="flex justify-center mb-5">
+        <div className="flex justify-center  mb-5">
         <FormField
           control={form.control}
           name="kVa"
           render={({ field }) => (
-            <FormItem>
+            <FormItem >
               <FormLabel className="flex flex-col">Rating</FormLabel>
               <FormDescription className="text-xs">Enter the Rating (200-900 kVA)</FormDescription>
               <FormControl>
-                <Input required type="number" className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
+                <Input required className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
                     (e) => {
                         if(e.target.value === ""){
                             form.setValue("kVa", "")
                         }else{
-                            form.setValue("kVa", convertToNumber(e.target.value))
+                            form.setValue("kVa", convertToNumber(e.target.value) as number)
                         }
                     }
                 } />
               </FormControl>
+              <div className="flex text-red-500 text-xs">{numberError}</div>
               <FormMessage />
             </FormItem>
           )}
         />
+
         </div>
+
         {diagnosis &&
         <>
         <div className="flex justify-center mb-5">
