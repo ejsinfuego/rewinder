@@ -25,17 +25,15 @@ class GeneratorController extends Controller
 
         $userRole = User::where('id', auth()->user()->id)->first()->getRoleNames()->first();
 
-        $generatorAccess = GeneratorUser::where('user_id', auth()->user()->id)->get('generator_id');
+        $generatorAccess = $userRole === 'client' ?  GeneratorUser::where('user_id', auth()->user()->id, 'and')->where('status','granted')->get('generator_id') : GeneratorUser::where('user_id', auth()->user()->id)->get('generator_id');
+
+        $genForClient = GeneratorUser::where('user_id', auth()->user()->id, 'and')->where('status','granted')->get('generator_id');
 
         $role ? $generators = Generator::with('diagnosis')->with('generatorUsers')->with('user')->orderBy('created_at', 'desc')->paginate(10) : $generators = '';
 
-        $userRole == 'rewinder' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
+        $userRole === 'rewinder' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
 
-        $userRole == 'client' ? $generators = Generator::with('diagnosis')->whereIn('id', $generatorAccess)
-        ->whereHas('generatorUsers', function ($query) {
-            $query->where('status', 'granted');
-        })
-        ->orderBy('created_at', 'desc')->paginate(10) : '';
+        $userRole === 'client' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
 
         return Inertia::render('Dashboard', [
             'generators' => $generators,
@@ -163,7 +161,7 @@ class GeneratorController extends Controller
         }else if($role === 'client'){
             if($checkAccess){
                 //get all rewinding procedures where generator_id is equal to the generator id and status is equal to approved
-                $rewinding = RewindingProcedure::with('user')->with('comments.user', 'user')->where('generator_id', $generator->id)->where('status', 'approved')->get();
+                $rewinding = RewindingProcedure::with('user')->with('comments.user', 'user')->where('generator_id', $generator->id, 'and')->get();
             }else{
                 return redirect()->route('accessRequest', $generator->id);
             }

@@ -16,6 +16,7 @@ export default function Authenticated({
         useState(false);
     const role = usePage().props.role
     const [search, setSearch] = React.useState<string>("")
+
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
@@ -43,9 +44,8 @@ export default function Authenticated({
                                 Test Generator
                                 </NavLink>
                                 )}
-
-
                             </div>
+
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">

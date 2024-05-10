@@ -228,7 +228,6 @@ const GeneratorTable = ({ generators }: GeneratorTableProps) => {
                                         }
 
 
-
                                         {role === 'admin' && (<>
                                             <div className="justify-centerp pt-2">
                                                 <h1 className="text-lg">User Access</h1>
