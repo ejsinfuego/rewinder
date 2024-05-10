@@ -81,6 +81,7 @@ class RewindingProcedureController extends Controller
         return Inertia::render('ViewSummaryPage', [
             'diagnoses' => $rewindingProcedures,
             'generator' => $generator,
+            'role' => Auth::user()->hasRole('admin') ? 'admin' : (Auth::user()->hasRole('rewinder') ? 'rewinder' : 'client')
         ]);
 
     }
