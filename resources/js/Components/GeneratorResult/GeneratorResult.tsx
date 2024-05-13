@@ -166,10 +166,18 @@ const GeneratorResult = ({ generator, rewinding }:
                     }
                 }
             })
-
+            const filteredItem = rewinding.filter(f => f.step === steps[0].content).find(f => f.status);
             switch(current){
-                case 0 && current === null:
-                    return current + 1;
+                case 0:
+
+                    if(filteredItem){
+                       if(filteredItem.status === 'pending'){
+                           return 0;
+                       }else{
+                            return 1;
+                        }
+                    }
+                    return 0;
                 case 9:
                     return 9;
                 default:
@@ -179,6 +187,7 @@ const GeneratorResult = ({ generator, rewinding }:
 
             // return current === 0 && current === null ? current : current + 1
         }
+
         const checkIfFinished = () => {
             return updatesList.includes(steps[9].content)
         }
@@ -278,7 +287,7 @@ const GeneratorResult = ({ generator, rewinding }:
                                         </Card>
                                         :
                                         <>
-                                        {role === 'rewinder' && getPreviousStep().includes('approved') ?
+                                        {(role === 'rewinder' && getPreviousStep().includes('approved')) || current >= 0 ?
                                         <Form {...form} >
                                             <form encType="multipart/form-data"  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                                 <FormField
