@@ -19,25 +19,20 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
     { diagnosisResult }
 
 ) => {
-    const toObject = JSON.parse(JSON.stringify(diagnosisResult));
-
-    const tryMap = toObject.map((item: { step: string, description: string }) => {
-        return {
-            prediction: item.step == "prediction" ? item.description : "",
-            kVa: item.step == "kVa" ? item.description : "",
-            serialNumber: item.step == "serialNumber" ? item.description : "",
-            step1: item.step == "step1" ? item.description : "",
-            step2: item.step == "step2" ? item.description : "",
-            step3: item.step == "step3" ? item.description : "",
-            step4: item.step == "step4" ? item.description : "",
-            rotor: item.step == "rotor" ? item.description : "",
-            stator: item.step == "stator" ? item.description : "",
-            exciter: item.step == "exciter" ? item.description : "",
-            materials: item.step == "materials" ? item.description : "",
-            manpower: item.step == "manpower" ? item.description : "",
-
-        };
-    });
+    const diagnosis = {
+        prediction: diagnosisResult.find((item) => item.step === "prediction")?.description,
+        kVa: diagnosisResult.find((item) => item.step === "kVa")?.description,
+        serialNumber: diagnosisResult.find((item) => item.step === "serialNumber")?.description,
+        step1: diagnosisResult.find((item) => item.step === "step1")?.description,
+        step2: diagnosisResult.find((item) => item.step === "step2")?.description,
+        step3: diagnosisResult.find((item) => item.step === "step3")?.description,
+        step4: diagnosisResult.find((item) => item.step === "step4")?.description,
+        rotor: diagnosisResult.find((item) => item.step === "rotor")?.description,
+        stator: diagnosisResult.find((item) => item.step === "stator")?.description,
+        exciter: diagnosisResult.find((item) => item.step === "exciter")?.description,
+        materials: diagnosisResult.find((item) => item.step === "materials")?.description,
+        manpower: diagnosisResult.find((item) => item.step === "manpower")?.description,
+    }
 
     return (
     <div className="py-2">
@@ -48,22 +43,22 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
             <CardContent>
             <div className=" justify-center">
             <h2 className="font-semibold text-5xl text-gray-600 text-center leading-tight">{
-                tryMap.prediction
+                diagnosis?.prediction
             }</h2>
             <h3 className="font-semibold text-lg text-center leading-tight">Estimated Days of Rewinding Duration</h3>
             </div>
             <div className="grid grid-cols-2 p-2 gap-3 m-2">
-            <h2 className="flex font-normal text-m leading-tight">Rating: {tryMap.kVa} kVa</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Serial Number: {tryMap.serialNumber}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Test 1 - IR Test: {tryMap.step1 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Test 2 - Winding Resistance Test: {tryMap.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Test 3 -Phase Voltage Test: {tryMap.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Test 4 - Surge Test: {tryMap.step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Rotor: {tryMap.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Stator: {tryMap.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Exciter: {tryMap.exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Materials: {tryMap.materials == "true" ? 'Available': 'Not Available'}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Manpower: {tryMap.manpower}</h2>
+            <h2 className="flex font-normal text-m leading-tight">Rating: {diagnosis?.kVa} kVa</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Serial Number: {diagnosis?.serialNumber}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 1 - IR Test: {diagnosis?.step1 ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 2 - Winding Resistance Test: {diagnosis?.step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 3 -Phase Voltage Test: {diagnosis.step3 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 4 - Surge Test: {diagnosis.step4 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Rotor: {diagnosis.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Stator: {diagnosis.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Exciter: {diagnosisResult.find((item) => item.step === "exciter")?.description == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Materials: {diagnosis.materials == "true" ? 'Available': 'Not Available'}</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Manpower: {diagnosis.manpower}</h2>
             </div>
             </CardContent>
         </Card>
