@@ -65,8 +65,6 @@ class RewindingProcedureController extends Controller
 
         RewindingProcedure::where('procedure_id', $request->rewinding_id)->update(['status' => 'approved']);
 
-
-
     }
 
     /**

@@ -2,7 +2,9 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import DiagnosisResult from "@/Components/DiagnosisResult/DiagnosisResult";
-export default function Dashboard({ auth }: PageProps) {
+
+
+export default function DiagnosisResultPage({ auth }: PageProps, diagnosisResult: { step: string, description: string }[]) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -16,7 +18,7 @@ export default function Dashboard({ auth }: PageProps) {
         >
             <Head title="Dashboard" />
             <div className="flex justify-center mt-6 max-w-full border border-2">
-                <DiagnosisResult diagnosisResult={} />
+                <DiagnosisResult diagnosisResult={diagnosisResult} />
             </div>
         </AuthenticatedLayout>
     );

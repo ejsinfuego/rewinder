@@ -26,15 +26,15 @@ interface mainFormula {
 }
 
 export const isForRewind = ({ step_1, step_2, step_3, step_4}: forRewind) => {
-    const threeSteps = step_1 === 'true' && step_2 === 'true' && step_3 === 'true';
-    const fourthStep = step_4 === 'true';
+    const threeSteps = step_1 === 'true' && step_2 === 'true' && step_3 === 'true'; // determines if first 3 steps passed or failed
+    const fourthStep = step_4 === 'true'; // determines if step 3 passed or failed
 
-    return (threeSteps && fourthStep) ? 'recon' : (fourthStep ? 'recon' : 'rewind');
+    return (threeSteps && fourthStep) ? 'recon' : (fourthStep ? 'recon' : 'rewind'); //if all the 4 steps passed, return recond else check if 4th step returns true, return recon; if false, return rewind.
 };
 
 export const damage = ({damage } : {damage: Damage}) => {
-    //false means not damaged
-
+    //false means not damaged and failed
+    //true = passed / damaged
     const exciterOnly = damage.exciter === 'true' && damage.rotor === 'false' && damage.stator === 'false';
 
     const statorOnly = damage.rotor === 'false' && damage.stator === 'true' && damage.exciter === 'false';
@@ -71,7 +71,9 @@ export const damage = ({damage } : {damage: Damage}) => {
 
 export const mainFormula = (damage: number, rating: number, materials: number, manpower: number): number => {
     const damageValue: number = parseFloat(damage.toString());
+    //this is the main formula from the mathematical model
     if (damageValue === 0) {
+        //if the damagevalue is 0, return 1 which considered one day
         //eslint-disable-next-line
         var result = 13.931 + 1.53 * rating - 1.508 * manpower - 7.175 * materials;
         result < 0 ? result = 0 : result;
@@ -87,6 +89,7 @@ export const mainFormula = (damage: number, rating: number, materials: number, m
     }
 };
 
+//this is the function to generate job_order
 export const jobOrderGenerator = () => {
     const jo = 'JE' + new Date().toISOString().slice(0, 19).replace(/[-T:/]/g, '');
     return jo;
