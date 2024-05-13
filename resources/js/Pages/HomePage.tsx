@@ -2,25 +2,18 @@ import { Button } from "@/Components/ui/button"
 import * as React from "react"
 import { Input } from "@/Components/ui/input"
 import Guest from "@/Layouts/GuestLayout"
-import { Link, router } from "@inertiajs/react"
+import { Link } from "@inertiajs/react"
 import { ScrollArea } from "@/Components/ui/scroll-area"
 import { Separator } from "@/Components/ui/separator"
 import { Search } from "lucide-react"
-
+import { Generator } from "@/types"
 interface HomePageProps {
-    results: Generator
+    results: Generator[]; // Update the type to be an array of Generator interfaces
 }
 
 export default function HomePage({ results }: HomePageProps) {
     const [search, setSearch] = React.useState<string>("")
 
-
-    const checkIfNull = (search) => {
-        if (search === null) {
-            return false
-        }
-        return true
-    }
     return(
         <Guest >
             <div className="flex justify-center">

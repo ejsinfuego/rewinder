@@ -42,20 +42,31 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/Components/ui/popover"
-import { get } from "http";
+import { rewinding, Generator } from "@/types";
 
 
 
 
 interface GeneratorResultProps {
-    generator: object;
+    generator: Generator;
     diagnosis: object;
-    rewinding: object;
+    rewinding: {
+        id: number,
+        step: string,
+        status: string,
+        created_at: string,
+        user: { id: number, name: string, email: string, result: string, created_at: string },
+        comments: { id: number, comment: string, rewinding_id: number, user_id: number, created_at: string }[],
+        procedure_id: number,
+        description: string,
+        image: string,
+    }[]
 }
 
 
-const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => {
-    const { token } = theme.useToken();
+const GeneratorResult = ({ generator, rewinding }:
+    GeneratorResultProps
+) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     console.log('---rewinding', rewinding)
     const [comment, setComment] = useState<string>("");
@@ -147,10 +158,11 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
             var current = 0;
             steps.map((item) => {
                 if (updatesList.includes(item.content)) {
-                    if(rewinding.filter(f => f.step === item.content).find(f => f.status).status === 'pending'){
-                        return current = item.index - 1
-                    }else{
-                        return current = item.index
+                    const filteredItem = rewinding.filter(f => f.step === item.content).find(f => f.status);
+                    if (filteredItem && filteredItem.status === 'pending') {
+                        return current = item.index - 1;
+                    } else {
+                        return current = item.index;
                     }
                 }
             })
@@ -172,7 +184,6 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
         }
 
         const current = getCurrent()
-        console.log('---finished', checkIfFinished())
         form.setValue('generator_id', generator.id)
         form.setValue('file', selectedFile)
         form.setValue('step', steps[current].content)
@@ -190,7 +201,7 @@ const GeneratorResult: FC<GeneratorResultProps> = ({ generator, rewinding }) => 
         }
 
         const getPreviousStep = () => {
-           return rewinding.filter(f => f.step === steps[current - 1].content).map(f => {
+           return rewinding.filter(f => f.step === steps[current - 1]?.content).map(f => {
                 return f.status
               })
             }
