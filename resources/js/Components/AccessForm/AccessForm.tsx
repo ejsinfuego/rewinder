@@ -2,17 +2,18 @@ import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
+import { Generator } from "@/types";
 
 
 
 
 interface AccessFormProps {
-    generator: Generator
+    generator: Generator;
 }
 
 
 const AccessForm = ({ generator }: AccessFormProps) => {
-
+    console.log(generator)
     const { data, post, setData } = useForm({
         generator: generator.map(f => f.id)[0],
     })

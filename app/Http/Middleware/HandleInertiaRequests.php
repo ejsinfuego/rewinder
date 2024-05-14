@@ -31,14 +31,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-
+        //add flash messages
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
                 'role' => $request->user() ? ($request->user()->hasRole('client') ? 'client' : ($request->user()->hasRole('rewinder') ? 'rewinder' : 'admin')) : '',
             ],
-
+            'flash' => $request->session()->get('flash'),
         ];
     }
 }

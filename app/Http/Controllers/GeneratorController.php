@@ -29,11 +29,20 @@ class GeneratorController extends Controller
 
         $genForClient = GeneratorUser::where('user_id', auth()->user()->id, 'and')->where('status','granted')->get('generator_id');
 
-        $role ? $generators = Generator::with('diagnosis')->with('generatorUsers')->with('user')->orderBy('created_at', 'desc')->paginate(10) : $generators = '';
+        $role ? $generators = Generator::with('diagnosis')->with('generatorUsers',
+        function ($query) {
+            $query->where('user_id', '!=', auth()->user()->id);
+        })->with('user')->orderBy('created_at', 'desc')->paginate(10) : $generators = '';
 
-        $userRole === 'rewinder' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
+        $userRole === 'rewinder' ? $generators = Generator::with('diagnosis')->with('generatorUsers',
+        function ($query) {
+            $query->where('user_id', '!=', auth()->user()->id);
+        })->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
 
-        $userRole === 'client' ? $generators = Generator::with('diagnosis')->with('generatorUsers')->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
+        $userRole === 'client' ? $generators = Generator::with('diagnosis')->with('generatorUsers',
+        function ($query) {
+            $query->where('user_id', '!=', auth()->user()->id);
+        })->whereIn('id', $generatorAccess)->orderBy('created_at', 'desc')->paginate(10) : '';
 
         return Inertia::render('Dashboard', [
             'generators' => $generators,
@@ -147,6 +156,8 @@ class GeneratorController extends Controller
         $role = User::where('id', auth()->user()->id)->first()->hasRole('admin') ? 'admin' : (User::where('id', auth()->user()->id)->first()->hasRole('rewinder') ? 'rewinder' : 'client');
 
         $checkAccess = GeneratorUser::where('user_id', $userId)->where('generator_id', $generator->id)->first();
+
+        $checkAccessForClient = GeneratorUser::where('user_id', $userId)->where('generator_id', $generator->id)->where('status', 'granted')->first();
         //get the role of user
         if($role === 'admin'){
             //get all reinding procedures where generator_id is equal to the generator id and status is equal to pending
@@ -159,7 +170,7 @@ class GeneratorController extends Controller
             return redirect()->route('accessRequest', $generator->id);
         }
         }else if($role === 'client'){
-            if($checkAccess){
+            if($checkAccessForClient){
                 //get all rewinding procedures where generator_id is equal to the generator id and status is equal to approved
                 $rewinding = RewindingProcedure::with('user')->with('comments.user', 'user')->where('generator_id', $generator->id, 'and')->get();
             }else{
@@ -176,10 +187,21 @@ class GeneratorController extends Controller
 
     public function accessRequest(Generator $generator)
     {
-        $generator = Generator::where('id', $generator->id)->get();
-
+        $gen = Generator::where('id', $generator->id)->get();
+        $userId = auth()->user()->id;
+        $checkAccess = GeneratorUser::where([
+            ['user_id', $userId],
+            ['generator_id', $generator->id],
+        ])->first();
+        //show message that a request already been submitted
+        if($checkAccess){
+           return Inertia::render('AccessRequestPage', [
+               'generator' => $generator,
+               'message' => 'Existing request found. Please wait for approval.',
+           ]);
+        }
         return Inertia::render('AccessRequestPage', [
-            'generator' => $generator,
+            'generator' => $gen,
         ]);
     }
 
@@ -192,7 +214,8 @@ class GeneratorController extends Controller
             'generator_id' => $request->generator,
         ]);
 
-        return redirect()->route('dashboard');
+        //redirect to index function
+        return redirect()->route('dashboard')->with('message', 'Request submitted successfully');
     }
 
     public function search(Request $request)

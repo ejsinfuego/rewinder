@@ -287,7 +287,7 @@ const GeneratorResult = ({ generator, rewinding }:
                                         </Card>
                                         :
                                         <>
-                                        {(role === 'rewinder' && getPreviousStep().includes('approved')) || current >= 0 ?
+                                        {getPreviousStep().includes('approved') || current >= 0  && role === 'rewinder' ?
                                         <Form {...form} >
                                             <form encType="multipart/form-data"  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                                 <FormField
