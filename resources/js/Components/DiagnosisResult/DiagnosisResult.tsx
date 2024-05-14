@@ -50,13 +50,13 @@ const DiagnosisResult: FC<DiagnosisResultProps> = (
             <div className="grid grid-cols-2 p-2 gap-3 m-2">
             <h2 className="flex font-normal text-m leading-tight">Rating: {diagnosis?.kVa} kVa</h2>
             <h2 className=" flex font-normal text-m leading-tight">Serial Number: {diagnosis?.serialNumber}</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Test 1 - IR Test: {diagnosis?.step1 ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Test 1 - IR Test: {diagnosis?.step1 == 'true' ? 'Passed' : 'Failed' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Test 2 - Winding Resistance Test: {diagnosis?.step2 == "true" ? 'Passed' : 'Failed' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Test 3 -Phase Voltage Test: {diagnosis.step3 == "true" ? 'Passed' : 'Failed' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Test 4 - Surge Test: {diagnosis.step4 == "true" ? 'Passed' : 'Failed' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Rotor: {diagnosis.rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Stator: {diagnosis.stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Exciter: {diagnosisResult.find((item) => item.step === "exciter")?.description == "true" ? 'Damaged' : 'Not Damaged' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Exciter: {diagnosis.exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Materials: {diagnosis.materials == "true" ? 'Available': 'Not Available'}</h2>
             <h2 className=" flex font-normal text-m leading-tight">Manpower: {diagnosis.manpower}</h2>
             </div>
