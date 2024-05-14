@@ -2,9 +2,13 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import GeneratorTable from "@/Components/GeneratorsTable/GeneratorsTable";
+import { message as show } from "antd";
 
-export default function Dashboard({ auth, generators }: PageProps) {
+export default function Dashboard({ auth, generators, message }: PageProps) {
+    console.log(message)
     return (
+        <>
+        {message && show.success(message)}
         <AuthenticatedLayout
             user={auth.user}
             role={auth.role}
@@ -23,5 +27,7 @@ export default function Dashboard({ auth, generators }: PageProps) {
                 <GeneratorTable user={auth.user} generators={generators} />
             </div>
         </AuthenticatedLayout>
+        </>
+
     );
 }

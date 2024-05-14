@@ -52,7 +52,7 @@ export type PageProps<
         exciter: string;
         prediction: number;
     }[];
-    message: string;
+    message: {usePage(): {props: {flash: string}}};
 };
 
 export interface GeneratorResultPage {
