@@ -13,22 +13,16 @@ import {
     FormLabel,
     FormMessage,
 } from "../ui/form"
-import { Spinner } from "@/Components/Spinner"
 import TextInput from "../TextInput"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { ArrowLeftIcon } from "lucide-react";
-import { useForm as submitForm, usePage } from '@inertiajs/react';
+import { useForm as submitForm } from '@inertiajs/react';
 import { isForRewind, mainFormula, jobOrderGenerator, damage } from "@/lib/utils";
 import DiagnosisResult from "../DiagnosisResult/DiagnosisResult";
 
 interface GenerateFormProps {}
-
-interface AdminType {
-    id: number,
-    name: string
-}
 
 const GenerateForm: FC<GenerateFormProps> = () => {
     const [hide, setHide] = useState(false)
@@ -269,7 +263,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
           render={({ field }) => (
             <FormItem >
               <FormLabel className="flex flex-col">Rating</FormLabel>
-              <FormDescription className="text-xs">Enter the Rating (200-900 kVA)</FormDescription>
+              <FormDescription className="text-xs">Enter the Rating (10-1000 kVA)</FormDescription>
               <FormControl>
                 <Input required className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
                     (e) => {
