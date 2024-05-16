@@ -29,11 +29,9 @@ class Generator extends Model
     }
     public function toSearchableArray(): array
     {
-        $array = $this->toArray();
-
         return [
-            'job_order' => $this->job_order,
             'serial_number' => $this->serial_number,
+            'job_order' => $this->job_order,
         ];
     }
 

@@ -12,7 +12,10 @@ export type PageProps<
         user: User;
         role: string;
     };
-    usePage: () => { props: { generator: Generator } };
+    usePage: () => { props: { generator: Generator, auth: {
+        user: User;
+        role: string;
+    } } };
     generator: Generator;
     rewinding: rewinding;
     generators: {

@@ -220,7 +220,7 @@ class GeneratorController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->search;
+        $search = $request->generator;
         $generators = Generator::search($search)->get();
         return Inertia::render('HomePage', [
             'results' => $generators,
