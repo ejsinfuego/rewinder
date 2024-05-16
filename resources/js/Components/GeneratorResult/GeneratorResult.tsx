@@ -189,7 +189,8 @@ const GeneratorResult = ({ generator, rewinding  }:
         }
 
         const checkIfFinished = () => {
-            return updatesList.includes(steps[9].content)
+            const lastStep = rewinding.find(f => f.step === 'assemble')
+            return updatesList.includes(steps[9].content) && lastStep?.status == 'approved'
         }
 
         const current = getCurrent()
