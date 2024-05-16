@@ -39,7 +39,7 @@ export default function Register() {
         post(route("register"));
     };
 
-    const roleChange = (role) => {
+    const roleChange = (role: number) => {
         setData('role', role)
     }
 

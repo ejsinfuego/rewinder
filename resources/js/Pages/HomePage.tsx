@@ -7,34 +7,41 @@ import { ScrollArea } from "@/Components/ui/scroll-area"
 import { Separator } from "@/Components/ui/separator"
 import { Search } from "lucide-react"
 import { Generator } from "@/types"
+import { router } from '@inertiajs/react'
 interface HomePageProps {
     results: Generator[]; // Update the type to be an array of Generator interfaces
 }
 
 export default function HomePage({ results }: HomePageProps) {
-    const [search, setSearch] = React.useState<string>("")
-
+    const [search, setSearch] = React.useState<string>(" ")
+    console.log(results)
     return(
         <Guest >
-            <div className="flex justify-center">
+            <div className="flex justify-center rounded">
             <h2 className="font-semibold text-xl text-gray-800 leading-tight">Search your Generator Here</h2>
             </div>
             <div className="flex w-full max-w-sm items-center space-x-2 py-2">
-            <Input type="text" placeholder="serial number or job order"
+            <Input type="text" className="rounded" placeholder="serial number or job order"
              onChange={(e) => {
-
+                router.visit(`/search/${e.target.value || '&&'}`,{
+                    preserveState: true,
+                    only: ['results']
+                })
                 setSearch(e.target.value)
                 }}
              />
-            <Link href={'/search/'+search} only={['results']} >
-                <Button><Search ></Search>  </Button></Link>
+            <Link href={'/search/'+search || 'GEN'} only={['results']} >
+                <Button className="rounded">
+                    <Search>
+                    </Search>
+                </Button>
+            </Link>
             </div>
-            { results && (
-                <div className="flex justify-center">
-            <ScrollArea className="h-72 w-full rounded-md border">
-                <div className="p-4">
+            <div className="flex justify-center">
+            <ScrollArea className="h-72 w-full rounded border">
+                <div className="p-4 rounded">
                     <h4 className="mb-4 text-sm font-medium leading-none">Result (Serial Number | Job Order)</h4>
-                    {
+                    {results && results?.length > 0 ? (
                         results.map((result) => (
                             <>
                             <Link href={'/diagnosisResult/'+result.id+'/show'}>
@@ -50,13 +57,14 @@ export default function HomePage({ results }: HomePageProps) {
                             </>
 
                         ))
-                    }
+                    ):
+                    <div className="flex justify-center">
+                    <h4 className="text-gray-500">No results found</h4>
+                </div>}
                 </div>
-                </ScrollArea>
-            </div>
-            )
-        }
-          <div className="flex justify-center text-gray-500">
+        </ScrollArea>
+        </div>
+          <div className="flex justify-center text-gray-500 py-3">
             <Link className="font-semibold" href={'/login'}>Login</Link> {' | '}
             <Link className="font-semibold" href={'/register'}>{' '}Register</Link>
             </div>

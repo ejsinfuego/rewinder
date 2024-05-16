@@ -16,7 +16,7 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/search/{variable}', [GeneratorController::class, 'search'])->name('search');
+Route::get('/search/{generator}', [GeneratorController::class, 'search'])->name('search');
 
 
 Route::middleware(['auth', 'verified', 'role:admin|rewinder'])->group(function() {

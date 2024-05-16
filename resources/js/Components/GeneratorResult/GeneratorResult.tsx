@@ -60,11 +60,11 @@ interface GeneratorResultProps {
         procedure_id: number,
         description: string,
         image: string,
-    }[]
+    }[];
 }
 
 
-const GeneratorResult = ({ generator, rewinding }:
+const GeneratorResult = ({ generator, rewinding  }:
     GeneratorResultProps
 ) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -123,7 +123,7 @@ const GeneratorResult = ({ generator, rewinding }:
        }
       ];
 
-    console.log(rewinding)
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (e.target.files && e.target.files.length) {
             setSelectedFile(e.target.files[0]);
@@ -216,6 +216,7 @@ const GeneratorResult = ({ generator, rewinding }:
             }
         console.log('---prev', getPreviousStep())
         const role = usePage().props.auth.role
+        console.log(usePage().props.auth.role)
     const items = steps.map((item) => {
         return {
             title: <h2 className="font-semibold">{item.title}</h2>,
@@ -240,40 +241,40 @@ const GeneratorResult = ({ generator, rewinding }:
                                                 <CardHeader className="text-left -l-5">
                                                     This step has completed successfully on <b>{
                                                         dayjs(rewinding
-                                                        .filter(f => f.step === item.content)
-                                                        .find(f => f.created_at).created_at).format('MMMM D, YYYY h:mm A')
-                                                    }</b> by <b>{rewinding.filter(f => f.step === item.content).find(f => f.user).user.name}</b>
+                                                        .filter(f => f?.step === item?.content)
+                                                        .find(f => f?.created_at)?.created_at).format('MMMM D, YYYY h:mm A')
+                                                    }</b> by <b>{rewinding.filter(f => f.step === item.content).find(f => f.user)?.user.name}</b>
                                                 </CardHeader>
                                                 <CardDescription>
                                                     <div className="justify-start">
                                                     <Label className="text-center">Description
                                                     </Label>
-                                                    <Textarea type="text" readOnly value={rewinding
-                                                        .filter(f => f.step === item.content)
-                                                        .find(f => f.description).description} />
+                                                    <Textarea readOnly value={rewinding
+                                                        .filter(f => f?.step === item?.content)
+                                                        .find(f => f?.description)?.description} />
                                                     </div>
                                                     <div className="justify-center">
                                                     <Label className="text-center">Image
                                                     </Label>
                                                     <Popover>
                                                     <PopoverTrigger><img src={`/storage/${(rewinding
-                                                            .filter(f => f.step === item.content)
-                                                            .find(f => f.image)).image}`} alt="step" /></PopoverTrigger>
+                                                            .filter(f => f.step === item?.content)
+                                                            .find(f => f.image))?.image}`} alt="step" /></PopoverTrigger>
                                                         <PopoverContent sideOffset={-380}
                                                         align={"end"}
                                                         className="w-3/4"
                                                         ><img src={`/storage/${(rewinding
-                                                            .filter(f => f.step === item.content)
-                                                            .find(f => f.image)).image}`} alt="step" /></PopoverContent>
+                                                            .filter(f => f.step === item?.content)
+                                                            .find(f => f?.image))?.image}`} alt="step" /></PopoverContent>
 
-                                                    </Popover>{role==='admin' &&
+                                                    </Popover>{role ==='admin' &&
                                                 <div className="justify-center pt-10">
-                                                {(rewinding.filter(f => f.step === item.content).find(f => f.status)).status === 'pending' &&   <Button
+                                                {(rewinding.filter(f => f.step === item.content).find(f => f.status))?.status === 'pending' &&   <Button
                                                 onClick={() => {
                                                 router.visit('/approveProcedure/', {
                                                     method: 'post',
                                                     data: {
-                                                        rewinding_id: rewinding.filter(f => f.step === item.content).find(f => f.procedure_id).procedure_id},
+                                                        rewinding_id: rewinding.filter(f => f.step === item.content).find(f => f?.procedure_id)?.procedure_id},
                                                     forceFormData: true,
                                                     only: ['rewinding'],
                                                     })
@@ -287,7 +288,7 @@ const GeneratorResult = ({ generator, rewinding }:
                                         </Card>
                                         :
                                         <>
-                                        {getPreviousStep().includes('approved') || current >= 0  && role === 'rewinder' ?
+                                        {(getPreviousStep().includes('approved') || current >= 0) && role == 'rewinder' ?
                                         <Form {...form} >
                                             <form encType="multipart/form-data"  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                                 <FormField
@@ -317,7 +318,7 @@ const GeneratorResult = ({ generator, rewinding }:
                                                             <Input type="file" onChange={handleFileChange}/>
                                                         </FormControl>
                                                         <FormDescription>
-                                                            This is your public display name.
+                                                            This is your photo for documentation.
                                                         </FormDescription>
                                                         <FormMessage />
                                                     </FormItem>

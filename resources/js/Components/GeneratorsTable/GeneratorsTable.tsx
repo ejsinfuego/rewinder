@@ -1,10 +1,7 @@
-import React from "react"
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableHead,
     TableHeader,
     TableRow,
   } from "@/Components/ui/table"
@@ -18,14 +15,12 @@ import {
   } from "@/Components/ui/sheet"
 import dayjs from "dayjs"
 import { Button } from "@/Components/ui/button";
-import { useForm, router, Link, usePage } from '@inertiajs/react';
+import { router, Link, usePage } from '@inertiajs/react';
 import { message } from "antd";
 import {
     Pagination,
     PaginationContent,
     PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
     PaginationItem,
   } from "@/Components/ui/pagination";
   import {
@@ -38,6 +33,14 @@ import {
 
 interface GeneratorTableProps {
     generators: {
+        current_page: string,
+        next_page: string,
+        last_page: string,
+        links: {
+            url: string,
+            label: number,
+            active: boolean
+        }[],
         data: {
             id: number,
             serial_number: string,
@@ -63,13 +66,14 @@ interface GeneratorTableProps {
 
     };
     user: object;
+
 }
 
 
 const GeneratorTable = ({ generators }: GeneratorTableProps) => {
 
     const role = usePage().props.role;
-
+    console.log(generators);
     const headers = ['Serial Number', 'Job Order', 'Rating', 'Result', 'Status','Date Created']
 
     const rows = Object.values(generators.data).map((generator: {
