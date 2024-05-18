@@ -135,8 +135,8 @@ const GeneratorResult = ({ generator, rewinding  }:
         padding: '20px',
     }
     const formSchema = z.object({
-        description: z.string().min(2),
-        file: z.any().optional().nullable(),
+        description: z.string().min(2, "Looks like your description is not enough"),
+        file: z.any(),
         generator_id: z.number(),
         step: z.string()
     })
@@ -189,7 +189,8 @@ const GeneratorResult = ({ generator, rewinding  }:
         }
 
         const checkIfFinished = () => {
-            return updatesList.includes(steps[9].content)
+            const lastStep = rewinding.find(f => f.step === 'assemble')
+            return updatesList.includes(steps[9].content) && lastStep?.status == 'approved'
         }
 
         const current = getCurrent()
@@ -198,6 +199,7 @@ const GeneratorResult = ({ generator, rewinding  }:
         form.setValue('step', steps[current].content)
 
         const onSubmit = (values: z.infer<typeof formSchema>) => {
+            form.getValues('file') != null ?
             router.visit('/generatorUpdate', {
                 method: 'post',
                 data: {...values, file: selectedFile},
@@ -207,6 +209,7 @@ const GeneratorResult = ({ generator, rewinding  }:
                     message.success('Update has been submitted successfully');
                 }
             })
+            : form.setError('file', { message: 'Please insert image' })
         }
 
         const getPreviousStep = () => {
@@ -313,7 +316,7 @@ const GeneratorResult = ({ generator, rewinding  }:
                                                 name="file"
                                                 render={() => (
                                                     <FormItem>
-                                                        <FormLabel>Picture</FormLabel>
+                                                        <FormLabel aria-required>Picture</FormLabel>
                                                         <FormControl>
                                                             <Input type="file" onChange={handleFileChange}/>
                                                         </FormControl>
