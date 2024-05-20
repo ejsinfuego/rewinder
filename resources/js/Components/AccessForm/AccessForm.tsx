@@ -8,17 +8,16 @@ import { Generator } from "@/types";
 
 
 interface AccessFormProps {
-    generator: Generator;
+    generator: Generator[];
 }
 
 
 const AccessForm = ({ generator }: AccessFormProps) => {
-    console.log(generator)
     const { data, post, setData } = useForm({
         generator: generator.map(f => f.id)[0],
     })
 
-    const submit = (e) => {
+    const submit = (e: React.MouseEvent) => {
         e.preventDefault()
         setData('generator', generator.map(f => f.id)[0])
 
@@ -27,7 +26,7 @@ const AccessForm = ({ generator }: AccessFormProps) => {
     return (
         <div className="justify-center">
             <div className="flex justify-center">
-            <h2 className="font-semibold text-xl text-gray-800 leading-tight">Oops. Looks like you don't have an access on {generator.map(f => f.serial_number)}. Ask for an access by clicking this button</h2>
+            <h2 className="font-semibold text-xl text-gray-800 leading-tight">Oops. Looks like you don&apos;t have an access on {generator.map(f => f.serial_number)}. Ask for an access by clicking this button</h2>
             </div>
             <div className="flex w-full justify-center p-5">
                 <Button onClick={submit}>Request Access</Button>

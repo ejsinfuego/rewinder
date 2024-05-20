@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { set, useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "../ui/button"
 import { Loader2 } from 'lucide-react';
@@ -29,7 +28,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     const [loading, setLoading] = useState(false)
     const [rewind, setRewind] = useState(false)
     const [diagnosis, setDiagnosis] = useState("")
-    const [results, setResults] = useState(null)
+    const [results, setResults] = useState<{ step: string; description: unknown; }[]>([]);
     const [diagnosisLoad, setDiagnosisLoad] = useState(false)
     const [approver, approverChange] = useState("")
     const [numberError, setNumberError] = useState("")
@@ -136,6 +135,8 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         console.log(values)
     }
 
+
+
     const handleSubmit = () => {
         getPrediction()
         if(form.getValues("result") === 'rewind'){
@@ -159,7 +160,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
 
     const handleLoad = () => {
         setLoading(true)
-        setDiagnosis(null)
+        setDiagnosis("") // Fix: Pass an empty argument to setDiagnosis function
         setTimeout(() => {
             setLoading(false)
             handleReconOrRewindChange()
@@ -167,6 +168,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     }
 
     const handleDiagnosisLoad = () => {
+        setDiagnosis("") // Fix: Pass an empty argument to setDiagnosis function
         setDiagnosisLoad(true)
         setTimeout(() => {
             setDiagnosisLoad(false)
