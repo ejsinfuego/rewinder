@@ -29,7 +29,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     const [loading, setLoading] = useState(false)
     const [rewind, setRewind] = useState(false)
     const [diagnosis, setDiagnosis] = useState("")
-    const [results, setResults] = useState(null)
+    const [results, setResults] = useState<{ step: string; description: string | number; }[]>([])
     const [diagnosisLoad, setDiagnosisLoad] = useState(false)
     const [approver, approverChange] = useState("")
     const [numberError, setNumberError] = useState("")
@@ -136,6 +136,8 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         console.log(values)
     }
 
+
+
     const handleSubmit = () => {
         getPrediction()
         if(form.getValues("result") === 'rewind'){
@@ -159,7 +161,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
 
     const handleLoad = () => {
         setLoading(true)
-        setDiagnosis(null)
+        setDiagnosis("") // Fix: Change null to an empty string
         setTimeout(() => {
             setLoading(false)
             handleReconOrRewindChange()
@@ -174,8 +176,8 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     }
 
     const saveData = () => {
-        form.setValue('approver', approver)
-        setData(form.getValues())
+        // form.setValue('approver', approver)
+        form.getValues('')
         post(route('testFormula'))
     }
 
@@ -193,7 +195,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
 
     return (
     <>
-    {results ?
+    {results.length > 0 ?
     <>
     {diagnosisLoad ? <>
         <div className="items-center">
