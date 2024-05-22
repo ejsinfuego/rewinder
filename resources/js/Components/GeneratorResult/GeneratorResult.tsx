@@ -135,7 +135,7 @@ const GeneratorResult = ({ generator, rewinding  }:
         padding: '20px',
     }
     const formSchema = z.object({
-        description: z.string().min(2, "Looks like your description is not enough"),
+        description: z.string().min(2, "Looks like your description is not enoughhhhh"),
         file: z.any(),
         generator_id: z.number(),
         step: z.string()
@@ -156,6 +156,7 @@ const GeneratorResult = ({ generator, rewinding  }:
         const getCurrent = () => {
             // eslint-disable-next-line
             var current = 0;
+            console.log(current)
             steps.map((item) => {
                 if (updatesList.includes(item.content)) {
                     const filteredItem = rewinding.filter(f => f.step === item.content).find(f => f.status);
@@ -218,8 +219,8 @@ const GeneratorResult = ({ generator, rewinding  }:
               })
             }
         console.log('---prev', getPreviousStep())
-        const role = usePage().props.auth.role
-        console.log(usePage().props.auth.role)
+        //eslint-disable-next-line
+        const role = (usePage().props.auth as any).role;
     const items = steps.map((item) => {
         return {
             title: <h2 className="font-semibold">{item.title}</h2>,
