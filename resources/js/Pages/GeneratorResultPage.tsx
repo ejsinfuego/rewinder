@@ -3,8 +3,28 @@ import { Head } from "@inertiajs/react";
 import { PageProps } from "@/types";
 import GeneratorResult from "@/Components/GeneratorResult/GeneratorResult";
 
+
+// interface Rewinding {
+//     rewinding: {
+//         id: number,
+//         step: string,
+//         status: string,
+//         created_at: string,
+//         user: { id: number, name: string, email: string, result: string, created_at: string },
+//         comments: { id: number, comment: string, rewinding_id: number, user_id: number, created_at: string, user: {
+//             id: number,
+//             name: string,
+//             email: string,
+//             result: string,
+//             created_at: string
+//         } }[],
+//         procedure_id: number,
+//         description: string,
+//         image: string,
+//     }[];
+// }
 export default function GeneratorResultPage({ auth,
-    generator, rewinding, diagnosis }: PageProps) {
+    generator, diagnosis, rewinding }: PageProps,) {
     return (
         <AuthenticatedLayout
             user={auth.user}
