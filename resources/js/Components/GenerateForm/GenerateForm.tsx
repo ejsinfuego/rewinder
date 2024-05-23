@@ -171,6 +171,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
     }
 
     const handleDiagnosisLoad = () => {
+        setDiagnosis("") // Fix: Pass an empty argument to setDiagnosis function
         setDiagnosisLoad(true)
         setTimeout(() => {
             setDiagnosisLoad(false)

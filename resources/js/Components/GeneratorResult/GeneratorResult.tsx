@@ -161,6 +161,7 @@ const GeneratorResult = ({ generator, rewinding  }:
         const getCurrent = () => {
             // eslint-disable-next-line
             var current = 0;
+            console.log(current)
             steps.map((item) => {
                 if (updatesList.includes(item.content)) {
                     const filteredItem = rewinding.filter(f => f.step === item.content).find(f => f.status);
@@ -225,10 +226,7 @@ const GeneratorResult = ({ generator, rewinding  }:
         console.log('---prev', getPreviousStep())
         //eslint-disable-next-line
         const role = (usePage().props.auth as any).role
-    const items = steps.map((item) => {
-        console.log('---list', getCurrent())
-        console.log('---item', item.content)
-        console.log('--checker', updatesList.includes(item.content))
+        const items = steps.map((item) => {
         return {
             title: <h2 className="font-semibold">{item.title}</h2>,
             description: updatesList.includes(item.content) ?
