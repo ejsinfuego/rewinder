@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -42,7 +42,7 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/Components/ui/popover"
-import { rewinding, Generator } from "@/types";
+import { Generator } from "@/types";
 
 
 
@@ -56,7 +56,13 @@ interface GeneratorResultProps {
         status: string,
         created_at: string,
         user: { id: number, name: string, email: string, result: string, created_at: string },
-        comments: { id: number, comment: string, rewinding_id: number, user_id: number, created_at: string }[],
+        comments: { id: number, comment: string, rewinding_id: number, user_id: number, created_at: string, user: {
+            id: number,
+            name: string,
+            email: string,
+            result: string,
+            created_at: string
+        } }[],
         procedure_id: number,
         description: string,
         image: string,
@@ -150,8 +156,7 @@ const GeneratorResult = ({ generator, rewinding  }:
           step: "",
         },
       })
-
-        const updatesList = rewinding.map(f => f.step)
+      const updatesList = rewinding.map(f => f.step)
 
         const getCurrent = () => {
             // eslint-disable-next-line
@@ -218,12 +223,15 @@ const GeneratorResult = ({ generator, rewinding  }:
               })
             }
         console.log('---prev', getPreviousStep())
-        const role = usePage().props.auth.role
-        console.log(usePage().props.auth.role)
+        //eslint-disable-next-line
+        const role = (usePage().props.auth as any).role
     const items = steps.map((item) => {
+        console.log('---list', getCurrent())
+        console.log('---item', item.content)
+        console.log('--checker', updatesList.includes(item.content))
         return {
             title: <h2 className="font-semibold">{item.title}</h2>,
-            description: !item.content.includes(updatesList.content) ?
+            description: updatesList.includes(item.content) ?
             (item.index <= getCurrent() &&
             <>
                 <Sheet >
@@ -364,7 +372,7 @@ const GeneratorResult = ({ generator, rewinding  }:
                                             onClick={() => {
                                                 router.visit('/addComment', {
                                                     method: 'post',
-                                                    data: {comment, rewinding_id: rewinding.filter(f => f.step === item.content).find(f => f.procedure_id).procedure_id},
+                                                    data: {comment, rewinding_id: rewinding.filter(f => f?.step === item?.content).find(f => f?.procedure_id)?.procedure_id},
                                                     forceFormData: true,
                                                     only: ['rewinding'],
                                                     })
@@ -372,7 +380,74 @@ const GeneratorResult = ({ generator, rewinding  }:
                                         </SheetFooter>}
                                         </SheetContent>
                                         </Sheet>
-                </>)  : <div className="text-red-500">Not Completed</div>,
+                </>)  : (current === item.index ?
+                <Sheet >
+                    <SheetTrigger >
+                        <div className="text-yellow-500">On Going</div>
+                    </SheetTrigger>
+                    <SheetContent className="w-[600px] sm:w-[540px] flex-col flex overflow-auto">
+                        <SheetHeader>
+                            <SheetTitle className="text-lg">Update {item.title}</SheetTitle>
+                            <SheetDescription>
+                                <Form {...form} >
+                                    <form encType="multipart/form-data"  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                        <FormField
+                                        control={form.control}
+                                        name="description"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Textarea placeholder="type here..." {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                You can describe what are the challenges, outcome, or anything important that need to know by client.
+                                            </FormDescription>
+                                            <FormMessage />
+                                            </FormItem>
+
+                                        )}
+                                        />
+                                        <FormField
+                                        control={form.control}
+                                        name="file"
+                                        render={() => (
+                                            <FormItem>
+                                                <FormLabel aria-required>Picture</FormLabel>
+                                                <FormControl>
+                                                    <Input type="file" onChange={handleFileChange}/>
+                                                </FormControl>
+                                                <FormDescription>
+                                                    This is your photo for documentation.
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        />
+
+                                        <Button className="button" >Submit</Button>
+                                    </form>
+                                </Form>
+                            </SheetDescription>
+                        </SheetHeader>
+                        <SheetFooter className="justify-end">
+                            <Textarea onChange={(e) => {
+                                setComment(e.target.value)
+
+                            }} className="mt-auto" />
+                            <Button
+                            onClick={() => {
+                                router.visit('/addComment', {
+                                    method: 'post',
+                                    data: {comment, rewinding_id: rewinding.filter(f => f?.step === item?.content).find(f => f?.procedure_id)?.procedure_id},
+                                    forceFormData: true,
+                                    only: ['rewinding'],
+                                    })
+                            }} className="button mt-auto">Comment</Button>
+                        </SheetFooter>
+                    </SheetContent>
+                </Sheet>
+                 : <div className="text-red-500">Not Completed</div>),
             index: item.index,
         }
     });

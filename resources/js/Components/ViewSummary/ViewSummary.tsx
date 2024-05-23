@@ -7,11 +7,26 @@ import {
     CardTitle,
 } from "../ui/card"
 import dayjs from 'dayjs';
+import { Diagnoses, Generator } from '@/types';
 
+interface ViewSummaryProps {
+    diagnoses: {
+        id: number,
+        step: string,
+        status: string,
+        created_at: string,
+        user: { id: number, name: string, email: string, result: string, created_at: string },
+        comments: { id: number, comment: string, rewinding_id: number, user_id: number, created_at: string }[],
+        procedure_id: number,
+        description: string,
+        image: string,
+    };
+    generator: Generator;
+}
 
 export default function ViewSummary() {
-    const results = usePage().props.diagnoses;
-    const generator = usePage().props.generator;
+    const results = usePage().props.diagnoses as ViewSummaryProps["diagnoses"][];
+    const generator = usePage().props.generator as Generator;
     console.log(results);
     const splitAndCapitalize = (str: string) => {
         return str.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -32,10 +47,10 @@ export default function ViewSummary() {
             </div>
             <div className="grid grid-cols-2 p-2 gap-3 m-2">
             <h2 className="flex font-normal text-m leading-tight">Rating: {generator.diagnosis[0].kVa} kVa</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.diagnosis[0].step1 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.diagnosis[0].step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.diagnosis[0].step2 == "true" ? 'Passed' : 'Failed' }</h2>
-            <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.diagnosis[0].step2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.diagnosis[0].step_1 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.diagnosis[0].step_2 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 3: {generator.diagnosis[0].step_3 == "true" ? 'Passed' : 'Failed' }</h2>
+            <h2 className=" flex font-normal text-m leading-tight">Step 4: {generator.diagnosis[0].step_4 == "true" ? 'Passed' : 'Failed' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Rotor: {generator.diagnosis[0].rotor == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Stator: {generator.diagnosis[0].stator == "true" ? 'Damaged' : 'Not Damaged' }</h2>
             <h2 className=" flex font-normal text-m leading-tight">Exciter: {generator.diagnosis[0].exciter == "true" ? 'Damaged' : 'Not Damaged' }</h2>
@@ -46,7 +61,7 @@ export default function ViewSummary() {
         </Card>
         </div>
         <div className="grid grid-cols-3 w-full gap-5 px-20">
-            {results.map((result: any) => (<>
+            {results.map((result) => (<>
                 <Card className="w-full rounded text-gray-600 text-wrap">
                                 <CardHeader>
                                     <CardTitle>{splitAndCapitalize(result.step)}</CardTitle>

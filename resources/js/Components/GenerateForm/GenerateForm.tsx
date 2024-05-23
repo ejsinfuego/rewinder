@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "../ui/button"
 import { Loader2 } from 'lucide-react';
@@ -25,15 +25,17 @@ import DiagnosisResult from "../DiagnosisResult/DiagnosisResult";
 interface GenerateFormProps {}
 
 const GenerateForm: FC<GenerateFormProps> = () => {
-    const [hide, setHide] = useState(false)
+    const [hide] = useState(false)
     const [loading, setLoading] = useState(false)
     const [rewind, setRewind] = useState(false)
     const [diagnosis, setDiagnosis] = useState("")
-    const [results, setResults] = useState<{ step: string; description: string | number; }[]>([])
+    const [results, setResults] = useState(
+        [] as { step: string, description: string }[]
+    )
     const [diagnosisLoad, setDiagnosisLoad] = useState(false)
-    const [approver, approverChange] = useState("")
+    // const [approver, approverChange] = useState("")
     const [numberError, setNumberError] = useState("")
-    const { post, setData, data } = submitForm({
+    const { post, setData } = submitForm({
         serialNumber: "",
         kVa: 0,
         step1: "",
@@ -144,7 +146,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         const values = form.getValues()
         const res = values
         //convert the object into flat array
-        const result = res ? Object.entries(res).map(([key, value]) => ({ step: key, description: value })) : []
+        const result = res ? Object.entries(res).map(([key, value]) => ({ step: key, description: value.toString() })) : []
         setResults(result)
         handleDiagnosisLoad()
         }else{
@@ -177,9 +179,15 @@ const GenerateForm: FC<GenerateFormProps> = () => {
 
     const saveData = () => {
         // form.setValue('approver', approver)
-        form.getValues('')
+        const data = {
+            ...form.getValues(),
+            prediction: form.getValues('prediction').toString() // Convert prediction to a string
+        }
+        setData(data)
         post(route('testFormula'))
     }
+
+
 
     const [showSubmit, setShowSubmit] = useState(false)
 
@@ -205,7 +213,8 @@ const GenerateForm: FC<GenerateFormProps> = () => {
         </> :
         <>
         <div className="flex flex-col">
-        <DiagnosisResult diagnosisResult={results}/>
+
+        <DiagnosisResult diagnosisResult={results as { step: string, description: string }[]}/>
         {/*disable choices for approval  */}
         {/* <div className="mt-4">
                     <InputLabel htmlFor="role" value="User Type" />
@@ -270,7 +279,7 @@ const GenerateForm: FC<GenerateFormProps> = () => {
                 <Input required className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
                     (e) => {
                         if(e.target.value === ""){
-                            form.setValue("kVa", "")
+                            form.setValue("kVa", 0)
                         }else{
                             form.setValue("kVa", convertToNumber(e.target.value) as number)
                         }
@@ -549,12 +558,12 @@ const GenerateForm: FC<GenerateFormProps> = () => {
                 <FormLabel className="flex flex-col">Man Power</FormLabel>
                 <FormDescription className="text-xs">(ex. 1 or 2 or 3)</FormDescription>
                 <FormControl>
-                    <Input required type="number" className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
+                    <Input required type="text" className="p-2 flex min-w-[300px] rounded" placeholder="type here" {...field} onChange={
                         (e) => {
                             if(e.target.value === ""){
-                                form.setValue("manpower", "")
+                                form.setValue("manpower", 0)
                             }else{
-                                form.setValue("manpower", convertToNumber(e.target.value))
+                                form.setValue("manpower", convertToNumber(e.target.value) as number)
                             }
 
                         }

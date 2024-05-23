@@ -57,7 +57,6 @@ export default function Register() {
                         value={data.firstName}
                         className="mt-1 block w-full"
                         autoComplete="firstName"
-                        isFocused={true}
                         onChange={(e) => setData("firstName", e.target.value)}
                         required
                     />
@@ -73,7 +72,6 @@ export default function Register() {
                         value={data.lastName}
                         className="mt-1 block w-full"
                         autoComplete="lastName"
-                        isFocused={true}
                         onChange={(e) => setData("lastName", e.target.value)}
                         required
                     />
@@ -99,7 +97,9 @@ export default function Register() {
                 </div>
                  <div className="mt-4">
                     <InputLabel htmlFor="role" value="User Type" />
-                    <Select onValueChange={(e) => roleChange(e)}>
+                    <Select onValueChange={(e) => roleChange(
+                        parseInt(e)
+                    )}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select user type" />
                     </SelectTrigger>
