@@ -1,0 +1,1 @@
+import{j as s}from"./app-CVhW-gru.js";function t({children:e}){return s.jsxs("div",{className:"min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100",children:[s.jsx("div",{}),s.jsx("div",{className:"w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg",children:e})]})}export{t as G};
