@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("description")->nullable();
             $table->string("image")->nullable();
             $table->string("comment")->nullable();
+            $table->string("status")->default("pending");
             $table->foreignId("user_id")->references("id")->on("users")->nullable(true);
             $table->timestamps();
         });

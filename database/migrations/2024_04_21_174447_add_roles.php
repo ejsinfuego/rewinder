@@ -16,6 +16,7 @@ return new class extends Migration
         //
         Role::create(['name' => 'admin' ]);
         Role::create(['name' => 'client' ]);
+        Role::create(['name' => 'rewinder' ]);
         Permission::create(['name' => 'rewinder' ]);
     }
 
