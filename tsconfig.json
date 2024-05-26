@@ -13,7 +13,8 @@
         "paths": {
             "@/*": ["./resources/js/*"],
             "ziggy-js": ["./vendor/tightenco/ziggy"]
-        }
+        },
+        "skipLibCheck": true,
     },
     "include": [
         "resources/js/**/*.ts",
