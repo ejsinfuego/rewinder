@@ -73,10 +73,12 @@ interface GeneratorTableProps {
 const GeneratorTable = ({ generators }: GeneratorTableProps) => {
 
     const role = usePage().props.role;
-    console.log(generators);
+
     const headers = ['Serial Number', 'Job Order', 'Rating', 'Result', 'Status','Date Created']
 
-    const rows = Object.values(generators.data).map((generator: {
+    const generatorsData = generators.data || [];
+
+    const rows = Object.values(generatorsData).map((generator: {
         id: number,
         serial_number: string,
         job_order: string,
@@ -150,12 +152,12 @@ const GeneratorTable = ({ generators }: GeneratorTableProps) => {
                 <TableBody>
                 {rows.map((generator, index) => (
                     <TableRow key={index}>
-                        <TableCell>{generator.serial_number}</TableCell>
-                        <TableCell>{generator.job_order}</TableCell>
-                        <TableCell>{generator.rating}</TableCell>
-                        <TableCell>{generator.result}</TableCell>
-                        <TableCell>{generator.status}</TableCell>
-                        <TableCell>{generator.createdAt}</TableCell>
+                        <TableCell>{generator?.serial_number}</TableCell>
+                        <TableCell>{generator?.job_order}</TableCell>
+                        <TableCell>{generator?.rating}</TableCell>
+                        <TableCell>{generator?.result}</TableCell>
+                        <TableCell>{generator?.status}</TableCell>
+                        <TableCell>{generator?.createdAt}</TableCell>
                         <TableCell>
                         <Sheet>
                         <SheetTrigger>
@@ -163,7 +165,7 @@ const GeneratorTable = ({ generators }: GeneratorTableProps) => {
                         </SheetTrigger>
                                 <SheetContent>
                                     <SheetHeader>
-                                        <SheetTitle>Generator {generator.serial_number}</SheetTitle>
+                                        <SheetTitle>Generator {generator?.serial_number}</SheetTitle>
                                         <SheetDescription>
                                         </SheetDescription>
                                     </SheetHeader>
@@ -195,7 +197,7 @@ const GeneratorTable = ({ generators }: GeneratorTableProps) => {
                                             generator.result
                                         }</h2>
                                     <div className="grid grid-cols-2 p-2 gap-3 m-2">
-                                    <h2 className="flex font-normal text-m leading-tight">Rating: {generator.rating} kVa</h2>
+                                    <h2 className="flex font-normal text-m leading-tight">Rating: {generator?.rating} kVa</h2>
                                     <h2 className=" flex font-normal text-m leading-tight">Serial Number: {generator.serial_number}</h2>
                                     <h2 className=" flex font-normal text-m leading-tight">Step 1: {generator.step1}</h2>
                                     <h2 className=" flex font-normal text-m leading-tight">Step 2: {generator.step2 }</h2>
@@ -283,9 +285,9 @@ const GeneratorTable = ({ generators }: GeneratorTableProps) => {
     </div>
         <div className="flex justify-center">
                         {
-                                generators.data.length > 0 && (
+                                generators && generators?.data.length > 0 && (
                                         <PaginationLink>
-                                            Page {generators.current_page} of {generators.last_page}
+                                            Page {generators?.current_page} of {generators.last_page}
                                         </PaginationLink>
                                 )
                             }
@@ -293,8 +295,8 @@ const GeneratorTable = ({ generators }: GeneratorTableProps) => {
         <div className="flex flex-col">
                         <Pagination>
                         <PaginationContent>
-                            {generators.links.length > 0 && (
-                                generators.links.map((link, index) => (
+                            {generators && generators?.links.length > 0 && (
+                                generators?.links.map((link, index) => (
                                     <PaginationItem key={index} className="cursor-pointer rounded">
                                         <PaginationLink
                                             onClick={

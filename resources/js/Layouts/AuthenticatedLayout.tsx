@@ -36,7 +36,7 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
-                                {role !== 'client' && (
+                                {role === 'rewinder' && (
                                     <NavLink
                                     href={route("generatorForm")}
                                     active={route().current("generatorForm")}
